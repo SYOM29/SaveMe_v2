@@ -24,6 +24,7 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener
 {
     //variable declaration
+    //foldksljfgsdflgşkdfsgklsfdjhflşkh 19.36
     private ImageView ambulance;
     private ImageView fire;
     private ImageView police;
