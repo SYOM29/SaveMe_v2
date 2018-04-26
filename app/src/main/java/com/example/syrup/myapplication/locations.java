@@ -4,9 +4,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.preference.DialogPreference;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
@@ -21,21 +19,15 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
 
-public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener
-{
+public class locations extends AppCompatActivity
+        implements NavigationView.OnNavigationItemSelectedListener {
     //variable declaration
-    private ImageView ambulance;
-    private ImageView fire;
-    private ImageView police;
-    private ImageView siren;
-    private ImageView SOSButton;
 
     //onCreate
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_locations);
 
         //setting action bar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -51,49 +43,6 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-
-        //setting the variables
-        ambulance = (ImageView)findViewById(R.id.ambulanceButton);
-        siren = (ImageView)findViewById(R.id.sirenButton);
-        fire = (ImageView)findViewById(R.id.fireButton);
-        police = (ImageView)findViewById(R.id.policeButton);
-        SOSButton = (ImageView)findViewById(R.id.SOSButton);
-
-        //setting listeners
-        ambulance.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
-        });
-
-        fire.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
-        });
-
-        police.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
-        });
-
-        siren.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
-        });
-
-        SOSButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
-        });
     }
 
     //onBackPressed
@@ -137,15 +86,15 @@ public class MainActivity extends AppCompatActivity
 
         if (id == R.id.main_page)
         {
-
+            Intent goLocations = new Intent(locations.this, MainActivity.class);
+            startActivity(goLocations);
         }
         else if (id == R.id.contact_list) {
 
         }
         else if (id == R.id.locations)
         {
-            Intent goLocations = new Intent(MainActivity.this, locations.class);
-            startActivity(goLocations);
+
         }
         else if (id == R.id.recordings)
         {
@@ -159,7 +108,7 @@ public class MainActivity extends AppCompatActivity
         {
 
             //exiting the app
-            final AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+            final AlertDialog.Builder builder = new AlertDialog.Builder(locations.this);
             builder.setMessage("Are you sure you want to quit?");
             builder.setCancelable(true);
             builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
