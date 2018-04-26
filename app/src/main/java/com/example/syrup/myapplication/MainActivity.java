@@ -1,11 +1,15 @@
 package com.example.syrup.myapplication;
 
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.preference.DialogPreference;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -50,6 +54,7 @@ public class MainActivity extends AppCompatActivity
         police = (ImageView)findViewById(R.id.policeButton);
         SOSButton = (ImageView)findViewById(R.id.SOSButton);
 
+        //setting listeners
         ambulance.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -124,18 +129,47 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.main_page) {
-            // Handle the camera action
-        } else if (id == R.id.contact_list) {
+        if (id == R.id.main_page)
+        {
 
-        } else if (id == R.id.locations) {
+        }
+        else if (id == R.id.contact_list) {
 
-        } else if (id == R.id.recordings) {
+        }
+        else if (id == R.id.locations)
+        {
 
-        } else if (id == R.id.settings) {
+        }
+        else if (id == R.id.recordings)
+        {
 
-        } else if (id == R.id.exit) {
+        }
+        else if (id == R.id.settings)
+        {
 
+        }
+        else if (id == R.id.exit)
+        {
+
+            //exiting the app
+            final AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+            builder.setMessage("Are you sure you want to quit?");
+            builder.setCancelable(true);
+            builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.cancel();
+
+                }
+            });
+            builder.setPositiveButton("Close", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    finish();
+                }
+            });
+            AlertDialog alertDialog = builder.create();
+            alertDialog.show();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
