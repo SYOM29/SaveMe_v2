@@ -8,6 +8,7 @@
     tools:context=".Splash_screen"
     android:background="@drawable/background">
 //test123
+    test567
 
 
     <LinearLayout
