@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     tools:context=".Splash_screen"
     android:background="@drawable/background">
-//test
+//test123
 
 
     <LinearLayout
