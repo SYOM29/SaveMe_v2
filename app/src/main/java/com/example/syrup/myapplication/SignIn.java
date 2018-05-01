@@ -35,6 +35,7 @@ public class SignIn extends AppCompatActivity implements View.OnClickListener {
     private final String NAME = "Name";
     private final String SURNAME = "Surname";
     private final String EMAIL = "Email";
+    private final String GROUPCODE = "GroupCode";
     private final String TAG = "userInfo";
     private Button buttonRegister;
 
@@ -78,9 +79,9 @@ public class SignIn extends AppCompatActivity implements View.OnClickListener {
         final String name      = editTextName.getText().toString().trim();
         final String surname   = editTextSurname.getText().toString().trim();
         final String email     = editTextEmail.getText().toString().trim();
-        String password  = editTextPassword.getText().toString().trim();
-        String password2 = editTextPassword2.getText().toString().trim();
-
+        final String password  = editTextPassword.getText().toString().trim();
+        final String password2 = editTextPassword2.getText().toString().trim();
+        final String groupCode = "";
         if (TextUtils.isEmpty(name))
         {
             Toast.makeText(this, "enter name", Toast.LENGTH_SHORT).show();
@@ -140,6 +141,7 @@ public class SignIn extends AppCompatActivity implements View.OnClickListener {
                         dataToSave.put(NAME, name);
                         dataToSave.put(SURNAME, surname);
                         dataToSave.put(EMAIL, email);
+                        dataToSave.put(GROUPCODE, groupCode);
 
                         firebaseFirestore.collection("users").document( currentUser.getUid())
                                 .set(dataToSave)
