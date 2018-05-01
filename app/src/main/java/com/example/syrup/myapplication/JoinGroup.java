@@ -1,13 +1,16 @@
 package com.example.syrup.myapplication;
 
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -27,10 +30,12 @@ public class JoinGroup extends AppCompatActivity implements View.OnClickListener
     private FirebaseAuth firebaseAuth;
     private FirebaseUser currentUser;
     private final String GROUPCODE = "GroupCode";
-
+    private final String TAG = "userInfo";
     private TextView textView;
     private Button enter;
     private Button createGroup;
+    private String code;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,7 +58,7 @@ public class JoinGroup extends AppCompatActivity implements View.OnClickListener
                             {
                                 Intent goMainPage = new Intent(JoinGroup.this, MainActivity.class);
                                 startActivity(goMainPage);
-                                return;
+
                             }
 
                         }
@@ -86,9 +91,41 @@ public class JoinGroup extends AppCompatActivity implements View.OnClickListener
 
         else if ( view == createGroup )
         {
+            code = generateRandomCode();
+
+            Map<String, Object> dataToSave = new HashMap<String, Object>();
+            dataToSave.put( GROUPCODE , code );
+
+            firebaseFirestore.collection("users").document( currentUser.getUid())
+                    .set(dataToSave)
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            Log.d(TAG, "DocumentSnapshot successfully saved!");
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Log.w(TAG, "Error writing document", e);
+                        }
+                    });
             //TODO
-            //it will create a new group with a random code
+            //It should open another page that shows group code.
+            //Also, I did not check whether this is working or not
         }
 
+    }
+
+    public String generateRandomCode()
+    {
+        String charPool = "1234567890qwertyuopasdfghjklizxcvbnm";
+        String result = "";
+
+        for ( int i = 0; i < 6; i++)
+        {
+            result = result + charPool.charAt( (int)( Math.random() * 36 ) );
+        }
+        return result;
     }
 }
