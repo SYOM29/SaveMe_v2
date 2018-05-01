@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".JoinGroup">
+
+
+    <TextView
+        android:id="@+id/joinGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="53dp"
+        android:text="Join to a Group now!"
+        android:textSize="28dp"
+        />
+
+    <EditText
+        android:id="@+id/groupCode"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="191dp"
+
+        android:ems="10"
+        android:hint="Group code here!"
+        android:inputType="numberSigned"
+        android:textAlignment="center" />
+
+    <Button
+        android:id="@+id/enter"
+        android:layout_width="215dp"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:text="Enter" />
+
+    <Button
+        android:id="@+id/createGroup"
+        android:layout_width="215dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="73dp"
+        android:text="create a new group code" />
+
+    <TextView
+        android:id="@+id/pass"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="39dp"
+        android:text="Pass for now" />
+
+</RelativeLayout>
