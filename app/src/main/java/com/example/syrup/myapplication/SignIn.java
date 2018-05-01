@@ -20,6 +20,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.DocumentChange;
@@ -133,26 +134,27 @@ public class SignIn extends AppCompatActivity implements View.OnClickListener {
                         if ( task.isSuccessful() )
                         {
                             //successful
+                            FirebaseUser currentUser = firebaseAuth.getCurrentUser();
 
-                        Map<String, Object> dataToSave = new HashMap<String, Object>();
+                            Map<String, Object> dataToSave = new HashMap<String, Object>();
                         dataToSave.put(NAME, name);
                         dataToSave.put(SURNAME, surname);
                         dataToSave.put(EMAIL, email);
 
-                        firebaseFirestore.collection("users")
-                                .add(dataToSave)
-                                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                        firebaseFirestore.collection("users").document( currentUser.getUid())
+                                .set(dataToSave)
+                                .addOnSuccessListener(new OnSuccessListener<Void>() {
                                     @Override
-                                    public void onSuccess(DocumentReference documentReference) {
-                                        Log.d(TAG, "User has been added successfully with the id: "
-                                        + documentReference.getId());
+                                    public void onSuccess(Void aVoid) {
+                                        Log.d(TAG, "DocumentSnapshot successfully saved!");
                                     }
-                                }).addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                Log.w(TAG, "Error adding user" , e);
-                            }
-                        });
+                                })
+                                .addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        Log.w(TAG, "Error writing document", e);
+                                    }
+                                });
 
                             //start activity
                             Toast.makeText(SignIn.this,
