@@ -112,7 +112,7 @@ public class JoinGroup extends AppCompatActivity implements View.OnClickListener
                     });
             //TODO
             //It should open another page that shows group code.
-            //Also, I did not check whether this is working or not
+            //Also, I did not check whether this is working or notcghfgh
         }
 
     }
