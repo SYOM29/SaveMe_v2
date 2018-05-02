@@ -10,4 +10,7 @@
     <string name="googleMapsAPIKey">AIzaSyA_uvf9j0vevcWRQyD0jQ5amlPXyQgGmjw</string>
     <string name="title_activity_locatiions">locatiions</string>
     <string name="title_activity_locations">locations</string>
+    <string name="back">Back</string>
+    <string name="todo">ToDo</string>
+    <string name="change_profile_picture">change_profile_picture</string>
 </resources>
