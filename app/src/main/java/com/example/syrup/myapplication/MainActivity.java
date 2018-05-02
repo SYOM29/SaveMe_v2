@@ -7,14 +7,18 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.preference.DialogPreference;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -24,7 +28,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.Toast;
+
+import java.io.IOException;
 import java.lang.Object;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener
@@ -37,6 +45,10 @@ public class MainActivity extends AppCompatActivity
     private ImageView police;
     private ImageView siren;
     private ImageView SOSButton;
+    private MediaRecorder mRecorder;
+    private String mFileName = null;
+    private static final String LOG_TAG = "Record_log";
+    private StorageReference mStorage;
 
     //onCreate
     @Override
@@ -66,6 +78,10 @@ public class MainActivity extends AppCompatActivity
         police = (ImageView)findViewById(R.id.policeButton);
         SOSButton = (ImageView)findViewById(R.id.SOSButton);
 
+        mFileName = Environment.getExternalStorageDirectory().getAbsolutePath();
+        mFileName += "/recorded_audio.3gp";
+        mStorage = FirebaseStorage.getInstance().getReference();
+
         //setting listeners
         ambulance.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -74,7 +90,8 @@ public class MainActivity extends AppCompatActivity
                 String number = "112";
                  Intent intent = new Intent(Intent.ACTION_CALL);
                  intent.setData(Uri.parse("tel:" + number));
-                 if(ContextCompat.checkSelfPermission(MainActivity.this, android.Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+                 if(ActivityCompat.checkSelfPermission(MainActivity.this, android.Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED)
+                 {
                 return;
                  }
                  startActivity(intent);
@@ -103,9 +120,19 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
-        SOSButton.setOnClickListener(new View.OnClickListener() {
+        SOSButton.setOnTouchListener(new View.OnTouchListener() {
             @Override
-            public void onClick(View v) {
+            public boolean onTouch(View v, MotionEvent motionEvent)
+            {
+                if(motionEvent.getAction() == MotionEvent.ACTION_DOWN)
+                {
+                    startRecording();
+
+                }
+                else if(motionEvent.getAction() == MotionEvent.ACTION_UP)
+                {
+                    stopRecording();
+                }
 
             }
         });
@@ -120,6 +147,31 @@ public class MainActivity extends AppCompatActivity
         } else {
             super.onBackPressed();
         }
+    }
+    private void stopRecording()
+    {
+        mRecorder.stop();
+        mRecorder.release();
+        mRecorder = null;
+
+        uploadAudio();
+    }
+
+    private void startRecording()
+    {
+        mRecorder = new MediaRecorder();
+        mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+        mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
+        mRecorder.setOutputFile(mFileName);
+        mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
+
+        try{
+            mRecorder.prepare();
+        }catch (IOException e)
+        {
+            Log.e(LOG_TAG, "prepare() failed");
+        }
+        mRecorder.start();
     }
 
     @Override
