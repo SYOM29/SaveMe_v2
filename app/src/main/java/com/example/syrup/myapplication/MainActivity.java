@@ -25,6 +25,7 @@ public class MainActivity extends AppCompatActivity
 {
     //variable declaration
     //foldksljfgsdflgşkdfsgklsfdjhflşkh 19.36
+    //khfkpfkpfkgh
     private ImageView ambulance;
     private ImageView fire;
     private ImageView police;
