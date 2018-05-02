@@ -138,12 +138,12 @@ public class SignIn extends AppCompatActivity implements View.OnClickListener {
                             FirebaseUser currentUser = firebaseAuth.getCurrentUser();
 
                             Map<String, Object> dataToSave = new HashMap<String, Object>();
-                        dataToSave.put(NAME, name);
-                        dataToSave.put(SURNAME, surname);
-                        dataToSave.put(EMAIL, email);
-                        dataToSave.put(GROUPCODE, groupCode);
+                            dataToSave.put(NAME, name);
+                            dataToSave.put(SURNAME, surname);
+                            dataToSave.put(EMAIL, email);
+                            dataToSave.put(GROUPCODE, groupCode);
 
-                        firebaseFirestore.collection("users").document( currentUser.getUid())
+                            firebaseFirestore.collection("users").document( currentUser.getUid())
                                 .set(dataToSave)
                                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                                     @Override
