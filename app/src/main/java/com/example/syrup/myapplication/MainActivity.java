@@ -29,7 +29,12 @@ import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+
 import java.lang.Object;
+import java.util.UUID;
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener
 {
@@ -37,12 +42,12 @@ public class MainActivity extends AppCompatActivity
     private final int REQUEST_CALL = 1;
 
     //variable declaration
-
     private ImageView ambulance;
     private ImageView fire;
     private ImageView police;
     private ImageView siren;
     private ImageView SOSButton;
+    private FirebaseStorage storage = FirebaseStorage.getInstance();
 
     //onCreate
     @Override
@@ -64,6 +69,11 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        //setting firebase storage
+        String path = "firememes/" + UUID.randomUUID();
+        //creating base reference
+        StorageReference storageReference = storage.getReference();
 
         //setting the variables
         ambulance = (ImageView)findViewById(R.id.ambulanceButton);
