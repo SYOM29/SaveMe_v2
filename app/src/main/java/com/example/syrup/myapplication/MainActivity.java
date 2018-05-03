@@ -1,5 +1,6 @@
 package com.example.syrup.myapplication;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -32,6 +33,13 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.storage.UploadTask;
+
+import java.io.File;
 import java.io.IOException;
 import java.lang.Object;
 public class MainActivity extends AppCompatActivity
@@ -44,11 +52,13 @@ public class MainActivity extends AppCompatActivity
     private ImageView fire;
     private ImageView police;
     private ImageView siren;
-    private ImageView SOSButton;
+    private Button SOSButton;
     private MediaRecorder mRecorder;
     private String mFileName = null;
     private static final String LOG_TAG = "Record_log";
-    private StorageReference mStorage;
+    private ProgressDialog mProgress;
+
+    private StorageReference storageReference;
 
     //onCreate
     @Override
@@ -76,11 +86,11 @@ public class MainActivity extends AppCompatActivity
         siren = (ImageView)findViewById(R.id.sirenButton);
         fire = (ImageView)findViewById(R.id.fireButton);
         police = (ImageView)findViewById(R.id.policeButton);
-        SOSButton = (ImageView)findViewById(R.id.SOSButton);
+        SOSButton = (Button)findViewById(R.id.SOSButton);
 
         mFileName = Environment.getExternalStorageDirectory().getAbsolutePath();
         mFileName += "/recorded_audio.3gp";
-        mStorage = FirebaseStorage.getInstance().getReference();
+        storageReference = FirebaseStorage.getInstance().getReference();
 
         //setting listeners
         ambulance.setOnClickListener(new View.OnClickListener() {
@@ -127,13 +137,24 @@ public class MainActivity extends AppCompatActivity
                 if(motionEvent.getAction() == MotionEvent.ACTION_DOWN)
                 {
                     startRecording();
+                    mProgress.setMessage("Recording started...");
+                    mProgress.show();
 
                 }
                 else if(motionEvent.getAction() == MotionEvent.ACTION_UP)
                 {
                     stopRecording();
+                    mProgress.setMessage("Recording stopped...");
+                    mProgress.show();
                 }
+                return false;
 
+            }
+
+            @Override
+            public boolean performClick()
+            {
+                return true;
             }
         });
     }
@@ -155,6 +176,21 @@ public class MainActivity extends AppCompatActivity
         mRecorder = null;
 
         uploadAudio();
+    }
+    private void uploadAudio()
+    {
+        mProgress.setMessage("Uploading Audio...");
+        mProgress.show();
+        StorageReference filepath = storageReference.child("Audio").child("new_audio.3gp");
+        Uri uri = Uri.fromFile(new File(mFileName));
+
+        filepath.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                mProgress.setMessage("Uploading Finished!");
+                mProgress.show();
+            }
+        });
     }
 
     private void startRecording()
