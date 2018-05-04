@@ -13,10 +13,15 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class Groups extends AppCompatActivity implements View.OnClickListener {
 
@@ -25,6 +30,7 @@ public class Groups extends AppCompatActivity implements View.OnClickListener {
     private String groupCode;
     private FirebaseFirestore firebaseFirestore;
     private final String TAG = "groupCode";
+    private FirebaseAuth firebaseAuth;
 
 
     @Override
@@ -37,6 +43,7 @@ public class Groups extends AppCompatActivity implements View.OnClickListener {
 
 
         firebaseFirestore = FirebaseFirestore.getInstance();
+        firebaseAuth      = FirebaseAuth.getInstance();
         enterGroupCode.setOnClickListener(this);
 
     }
@@ -49,16 +56,46 @@ public class Groups extends AppCompatActivity implements View.OnClickListener {
 
         final DocumentReference docRef = firebaseFirestore.collection(groups).document(groupCode);
 
-        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>()
+        {
             @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()) {
+            public void onComplete(@NonNull Task<DocumentSnapshot> task)
+            {
+                if (task.isSuccessful())
+                {
                     DocumentSnapshot document = task.getResult();
 
-                    if (document.exists()) {
+                    if (document.exists())
+                    {
+                        String email;
+                        FirebaseUser currentUser = firebaseAuth.getCurrentUser();
+
+
+
+                        Map<String, Object> groupsCollection = new HashMap<String, Object>();
+                        groupsCollection.put( currentUser.getEmail() , currentUser.getUid() );
+
+                        //create groups collection
+                        firebaseFirestore.collection("groups").document( groupCode)
+                                .set(groupsCollection)
+                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void aVoid) {
+                                        Log.d(TAG, "DocumentSnapshot successfully saved!");
+                                    }
+                                })
+                                .addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        Log.w(TAG, "Error writing document", e);
+                                    }
+                                });
                     }
 
-                    else {
+                    else
+                    {
+                        Toast.makeText(Groups.this,
+                                "Group could not found", Toast.LENGTH_SHORT).show();
                     }
 
                 }

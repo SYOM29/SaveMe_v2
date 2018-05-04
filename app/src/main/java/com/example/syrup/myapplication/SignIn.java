@@ -184,6 +184,7 @@ public class SignIn extends AppCompatActivity implements View.OnClickListener {
 
                             //create groups collection
                             firebaseFirestore.collection("groups").document( groupCode)
+                                    .collection("usersInGroup").document(currentUser.getUid())
                                     .set(groupsCollection)
                                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                                         @Override
