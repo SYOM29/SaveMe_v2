@@ -29,7 +29,8 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".Login" />
         <activity android:name=".SignIn" />
-        <activity android:name=".JoinGroup"></activity>
+        <activity android:name=".JoinGroup" />
+        <activity android:name=".Groups"></activity>
     </application>
 
 </manifest>

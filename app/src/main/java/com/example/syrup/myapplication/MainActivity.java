@@ -20,6 +20,9 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
+
+import java.security.acl.Group;
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener
 {
@@ -141,7 +144,8 @@ public class MainActivity extends AppCompatActivity
 
         }
         else if (id == R.id.contact_list) {
-
+            Intent goLocations = new Intent(MainActivity.this, Groups.class);
+            startActivity(goLocations);
         }
         else if (id == R.id.locations)
         {
