@@ -1,5 +1,6 @@
 package com.example.syrup.myapplication;
 
+import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -52,7 +53,7 @@ public class MainActivity extends AppCompatActivity
     private ImageView fire;
     private ImageView police;
     private ImageView siren;
-    private Button SOSButton;
+    private ImageView SOSButton;
     private MediaRecorder mRecorder;
     private String mFileName = null;
     private static final String LOG_TAG = "Record_log";
@@ -61,6 +62,7 @@ public class MainActivity extends AppCompatActivity
     private StorageReference storageReference;
 
     //onCreate
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -86,7 +88,7 @@ public class MainActivity extends AppCompatActivity
         siren = (ImageView)findViewById(R.id.sirenButton);
         fire = (ImageView)findViewById(R.id.fireButton);
         police = (ImageView)findViewById(R.id.policeButton);
-        SOSButton = (Button)findViewById(R.id.SOSButton);
+        SOSButton = (ImageView)findViewById(R.id.SOSButton);
 
         mFileName = Environment.getExternalStorageDirectory().getAbsolutePath();
         mFileName += "/recorded_audio.3gp";
@@ -110,7 +112,16 @@ public class MainActivity extends AppCompatActivity
 
         fire.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(View v)
+            {
+                String number = "110";
+                Intent intent = new Intent(Intent.ACTION_CALL);
+                intent.setData(Uri.parse("tel:" + number));
+                if(ActivityCompat.checkSelfPermission(MainActivity.this, android.Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED)
+                {
+                    return;
+                }
+                startActivity(intent);
 
             }
         });
@@ -119,13 +130,21 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View v)
             {
-
+                String number = "155";
+                Intent intent = new Intent(Intent.ACTION_CALL);
+                intent.setData(Uri.parse("tel:" + number));
+                if(ActivityCompat.checkSelfPermission(MainActivity.this, android.Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED)
+                {
+                    return;
+                }
+                startActivity(intent);
             }
         });
 
         siren.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(View v)
+            {
 
             }
         });
@@ -137,25 +156,19 @@ public class MainActivity extends AppCompatActivity
                 if(motionEvent.getAction() == MotionEvent.ACTION_DOWN)
                 {
                     startRecording();
-                    mProgress.setMessage("Recording started...");
-                    mProgress.show();
+
 
                 }
                 else if(motionEvent.getAction() == MotionEvent.ACTION_UP)
                 {
                     stopRecording();
-                    mProgress.setMessage("Recording stopped...");
-                    mProgress.show();
+
                 }
-                return false;
-
-            }
-
-            @Override
-            public boolean performClick()
-            {
                 return true;
+
             }
+
+
         });
     }
 
@@ -179,16 +192,14 @@ public class MainActivity extends AppCompatActivity
     }
     private void uploadAudio()
     {
-        mProgress.setMessage("Uploading Audio...");
-        mProgress.show();
+
         StorageReference filepath = storageReference.child("Audio").child("new_audio.3gp");
         Uri uri = Uri.fromFile(new File(mFileName));
 
         filepath.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                mProgress.setMessage("Uploading Finished!");
-                mProgress.show();
+
             }
         });
     }

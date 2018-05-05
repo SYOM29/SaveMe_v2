@@ -175,7 +175,7 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:layout_editor_absoluteX="0dp">
 
-        <Button
+        <ImageView
             android:id="@+id/SOSButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
