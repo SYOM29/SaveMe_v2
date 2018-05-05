@@ -26,9 +26,12 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 public class SignIn extends AppCompatActivity implements View.OnClickListener {
 
@@ -49,6 +52,7 @@ public class SignIn extends AppCompatActivity implements View.OnClickListener {
     private FirebaseAuth firebaseAuth;
 
     private FirebaseFirestore firebaseFirestore;
+    private FirebaseStorage storage;
     private DocumentReference mDocRef;
 
     @Override
@@ -64,6 +68,7 @@ public class SignIn extends AppCompatActivity implements View.OnClickListener {
         editTextPassword  = findViewById(R.id.password);
         editTextPassword2 = findViewById(R.id.password2);
 
+        storage = FirebaseStorage.getInstance();
 
         buttonRegister.setOnClickListener(this);
 
@@ -142,6 +147,12 @@ public class SignIn extends AppCompatActivity implements View.OnClickListener {
                             dataToSave.put(SURNAME, surname);
                             dataToSave.put(EMAIL, email);
                             dataToSave.put(GROUPCODE, groupCode);
+
+                            //setting firebase storage
+                            String path = "firememes/" + UUID.randomUUID();
+                            //creating base reference
+                            StorageReference groupNum = storage.getReference();
+                            StorageReference imagesRef = groupNum.child("images");
 
                             firebaseFirestore.collection("users").document( currentUser.getUid())
                                 .set(dataToSave)
