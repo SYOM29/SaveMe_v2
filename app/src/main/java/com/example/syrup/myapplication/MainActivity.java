@@ -54,6 +54,7 @@ public class MainActivity extends AppCompatActivity
     private ImageView police;
     private ImageView siren;
     private ImageView SOSButton;
+    private Toast toast;
     private MediaRecorder mRecorder;
     private String mFileName = null;
     private static final String LOG_TAG = "Record_log";
@@ -92,6 +93,7 @@ public class MainActivity extends AppCompatActivity
 
         mFileName = Environment.getExternalStorageDirectory().getAbsolutePath();
         mFileName += "/recorded_audio.3gp";
+        mProgress = new ProgressDialog(this);
         storageReference = FirebaseStorage.getInstance().getReference();
 
         //setting listeners
@@ -155,13 +157,18 @@ public class MainActivity extends AppCompatActivity
             {
                 if(motionEvent.getAction() == MotionEvent.ACTION_DOWN)
                 {
+
                     startRecording();
+                   toast = Toast.makeText(MainActivity.this, "Recording is started...",Toast.LENGTH_LONG);
+                   toast.show();
 
 
                 }
                 else if(motionEvent.getAction() == MotionEvent.ACTION_UP)
                 {
                     stopRecording();
+                    toast = Toast.makeText(MainActivity.this, "Recording is stopped...",Toast.LENGTH_LONG);
+                    toast.show();
 
                 }
                 return true;
@@ -192,14 +199,19 @@ public class MainActivity extends AppCompatActivity
     }
     private void uploadAudio()
     {
+        mProgress.setMessage("Uploading Audio...");
+        mProgress.show();
 
-        StorageReference filepath = storageReference.child("Audio").child("new_audio.3gp");
+        StorageReference filepath = storageReference.child("Audio").child("new_audio.mp3");
         Uri uri = Uri.fromFile(new File(mFileName));
 
         filepath.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
-            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot)
+            {
+                mProgress.dismiss();
+                toast = Toast.makeText(MainActivity.this, "Recording is uploaded succesfully...",Toast.LENGTH_LONG);
+                toast.show();
             }
         });
     }
@@ -208,7 +220,7 @@ public class MainActivity extends AppCompatActivity
     {
         mRecorder = new MediaRecorder();
         mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-        mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
+        mRecorder.setOutputFormat(MediaRecorder.OutputFormat.DEFAULT);
         mRecorder.setOutputFile(mFileName);
         mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
 
