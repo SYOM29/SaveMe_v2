@@ -9,7 +9,6 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
-import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.Bundle;
@@ -148,8 +147,7 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View v)
             {
-                MediaPlayer player = MediaPlayer.create(MainActivity.this, R.raw.siren);
-                player.start();
+
             }
         });
 
@@ -272,8 +270,8 @@ public class MainActivity extends AppCompatActivity
         }
         else if (id == R.id.locations)
         {
-            //Intent goLocations = new Intent(MainActivity.this, locations.class);
-            //startActivity(goLocations);
+            Intent goLocations = new Intent(MainActivity.this, locations.class);
+            startActivity(goLocations);
         }
         else if (id == R.id.recordings)
         {
