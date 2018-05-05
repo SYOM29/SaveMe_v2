@@ -9,6 +9,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.Bundle;
@@ -47,8 +48,6 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener
 {
     //variable declaration
-    //foldksljfgsdflgşkdfsgklsfdjhflşkh 19.36
-    //khfkpfkpfkgh
     private ImageView ambulance;
     private ImageView fire;
     private ImageView police;
@@ -147,7 +146,8 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View v)
             {
-
+                MediaPlayer player = MediaPlayer.create(MainActivity.this, R.raw.siren);
+                player.start();
             }
         });
 
@@ -157,7 +157,6 @@ public class MainActivity extends AppCompatActivity
             {
                 if(motionEvent.getAction() == MotionEvent.ACTION_DOWN)
                 {
-
                     startRecording();
                    toast = Toast.makeText(MainActivity.this, "Recording is started...",Toast.LENGTH_LONG);
                    toast.show();
@@ -234,13 +233,6 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
-    }
-
-    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
@@ -279,7 +271,8 @@ public class MainActivity extends AppCompatActivity
         }
         else if (id == R.id.settings)
         {
-
+            Intent goSettings = new Intent(MainActivity.this, SettingsActivity.class);
+            startActivity(goSettings);
         }
         else if (id == R.id.exit)
         {
