@@ -1,13 +1,8 @@
 package com.example.syrup.myapplication;
 
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -17,24 +12,17 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ImageView;
 
-public class locations extends AppCompatActivity
+public class SettingsActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
-    //variable declaration
 
-    //onCreate
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_locations);
-
-        //setting action bar
+        setContentView(R.layout.activity_settings);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        toolbar.setBackground(new ColorDrawable(Color.parseColor("#0c5774")));
 
-        //setting navigation drawer
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -45,7 +33,6 @@ public class locations extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
     }
 
-    //onBackPressed
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -59,7 +46,7 @@ public class locations extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
+        getMenuInflater().inflate(R.menu.settings, menu);
         return true;
     }
 
@@ -84,48 +71,18 @@ public class locations extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.main_page)
-        {
-            Intent goLocations = new Intent(locations.this, MainActivity.class);
-            startActivity(goLocations);
-        }
-        else if (id == R.id.contact_list) {
+        if (id == R.id.nav_camera) {
+            // Handle the camera action
+        } else if (id == R.id.nav_gallery) {
 
-        }
-        else if (id == R.id.locations)
-        {
+        } else if (id == R.id.nav_slideshow) {
 
-        }
-        else if (id == R.id.recordings)
-        {
+        } else if (id == R.id.nav_manage) {
 
-        }
-        else if (id == R.id.settings)
-        {
+        } else if (id == R.id.nav_share) {
 
-        }
-        else if (id == R.id.exit)
-        {
+        } else if (id == R.id.nav_send) {
 
-            //exiting the app
-            final AlertDialog.Builder builder = new AlertDialog.Builder(locations.this);
-            builder.setMessage("Are you sure you want to quit?");
-            builder.setCancelable(true);
-            builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.cancel();
-
-                }
-            });
-            builder.setPositiveButton("Close", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    finish();
-                }
-            });
-            AlertDialog alertDialog = builder.create();
-            alertDialog.show();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

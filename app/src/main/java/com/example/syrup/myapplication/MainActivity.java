@@ -8,6 +8,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.DialogPreference;
@@ -47,7 +48,8 @@ public class MainActivity extends AppCompatActivity
     private ImageView police;
     private ImageView siren;
     private ImageView SOSButton;
-    private FirebaseStorage storage = FirebaseStorage.getInstance();
+
+    private FirebaseStorage storage;
 
     //onCreate
     @Override
@@ -55,10 +57,12 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
         //setting action bar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         toolbar.setBackground(new ColorDrawable(Color.parseColor("#0c5774")));
+
 
         //setting navigation drawer
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -70,10 +74,6 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        //setting firebase storage
-        String path = "firememes/" + UUID.randomUUID();
-        //creating base reference
-        StorageReference storageReference = storage.getReference();
 
         //setting the variables
         ambulance = (ImageView)findViewById(R.id.ambulanceButton);
@@ -82,7 +82,10 @@ public class MainActivity extends AppCompatActivity
         police = (ImageView)findViewById(R.id.policeButton);
         SOSButton = (ImageView)findViewById(R.id.SOSButton);
 
-        //setting listeners
+        storage = FirebaseStorage.getInstance();
+
+
+        //setting listeners for widgets
         ambulance.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v)
@@ -132,8 +135,10 @@ public class MainActivity extends AppCompatActivity
 
         siren.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-
+            public void onClick(View v)
+            {
+                MediaPlayer player = MediaPlayer.create(MainActivity.this, R.raw.siren);
+                player.start();
             }
         });
 
@@ -143,6 +148,13 @@ public class MainActivity extends AppCompatActivity
 
             }
         });
+
+
+        //setting firebase storage
+        String path = "firememes/" + UUID.randomUUID();
+        //creating base reference
+        StorageReference groupNum = storage.getReference();
+        StorageReference imagesRef = groupNum.child("images");
     }
 
     //onBackPressed
@@ -193,8 +205,8 @@ public class MainActivity extends AppCompatActivity
         }
         else if (id == R.id.locations)
         {
-            Intent goLocations = new Intent(MainActivity.this, locations.class);
-            startActivity(goLocations);
+            //Intent goLocations = new Intent(MainActivity.this, LocationsActivity.class);
+            //startActivity(goLocations);
         }
         else if (id == R.id.recordings)
         {
@@ -202,7 +214,8 @@ public class MainActivity extends AppCompatActivity
         }
         else if (id == R.id.settings)
         {
-
+            Intent goSettings = new Intent(MainActivity.this, SettingsActivity.class);
+            startActivity(goSettings);
         }
         else if (id == R.id.exit)
         {
