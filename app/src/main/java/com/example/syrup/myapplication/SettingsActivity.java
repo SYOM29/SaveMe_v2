@@ -12,7 +12,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageView;
+import android.widget.Switch;
 import android.widget.TextView;
 
 public class SettingsActivity extends AppCompatActivity
@@ -27,6 +29,9 @@ public class SettingsActivity extends AppCompatActivity
     private TextView GPSUpdateText;
     private TextView helpText;
     private TextView aboutText;
+
+    private Switch autoUpdateSwitch;
+    private boolean switchState;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +61,26 @@ public class SettingsActivity extends AppCompatActivity
         GPSUpdateText = (TextView)findViewById(R.id.autoGPSUpdateTextView);
         helpText = (TextView)findViewById(R.id.helpTextView);
         aboutText = (TextView)findViewById(R.id.aboutTextView);
+
+        autoUpdateSwitch = (Switch)findViewById(R.id.autoUpdateSwitch);
+        switchState = autoUpdateSwitch.isChecked();
+
+        //setting the listeners
+        account.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent goEditProfile = new Intent(SettingsActivity.this, Edit.class);
+                startActivity(goEditProfile);
+            }
+        });
+
+        accountText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent goEditProfile = new Intent(SettingsActivity.this, Edit.class);
+                startActivity(goEditProfile);
+            }
+        });
     }
 
     @Override

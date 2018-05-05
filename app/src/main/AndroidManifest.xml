@@ -35,11 +35,18 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".Login"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar"/>
         <activity
             android:name=".SignIn"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar"/>
         <activity android:name=".JoinGroup" />
+        <activity
+            android:name=".SettingsActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar"/>
+        <activity android:name=".Edit" />
     </application>
 
 </manifest>
