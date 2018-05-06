@@ -10,7 +10,6 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
@@ -58,7 +57,7 @@ public class SettingsActivity extends AppCompatActivity
         about = (ImageView)findViewById(R.id.aboutImageView);
 
         accountText = (TextView) findViewById(R.id.editProfileTextView);
-        GPSUpdateText = (TextView)findViewById(R.id.autoGPSUpdateTextView);
+        GPSUpdateText = (TextView)findViewById(R.id.GPSUpdateTextView);
         helpText = (TextView)findViewById(R.id.helpTextView);
         aboutText = (TextView)findViewById(R.id.aboutTextView);
 
@@ -83,6 +82,14 @@ public class SettingsActivity extends AppCompatActivity
         });
 
         about.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent goAbout= new Intent(SettingsActivity.this, AboutActivity.class);
+                startActivity(goAbout);
+            }
+        });
+
+        aboutText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent goAbout= new Intent(SettingsActivity.this, AboutActivity.class);
