@@ -81,6 +81,14 @@ public class SettingsActivity extends AppCompatActivity
                 startActivity(goEditProfile);
             }
         });
+
+        about.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent goAbout= new Intent(SettingsActivity.this, AboutActivity.class);
+                startActivity(goAbout);
+            }
+        });
     }
 
     @Override

@@ -8,7 +8,7 @@
     <string name="action_settings">Settings</string>
     <string name="group_name">SYRUP</string>
     <string name="googleMapsAPIKey">AIzaSyA_uvf9j0vevcWRQyD0jQ5amlPXyQgGmjw</string>
-    <string name="title_activity_locatiions">locatiions</string>
+    <string name="title_activity_locatiions">locations</string>
     <string name="title_activity_locations">locations</string>
     <string name="back">Back</string>
     <string name="todo">ToDo</string>
@@ -86,4 +86,5 @@
     <string name="pref_ringtone_silent">Silent</string>
 
     <string name="pref_title_vibrate">Vibrate</string>
+    <string name="title_activity_about">About Us</string>
 </resources>
