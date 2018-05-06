@@ -61,6 +61,9 @@ public class MainActivity extends AppCompatActivity
 
     private StorageReference storageReference;
 
+    //constants
+    private final int REQUEST_CALL = 1234;
+
     //onCreate
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -101,13 +104,14 @@ public class MainActivity extends AppCompatActivity
             public void onClick(View v)
             {
                 String number = "112";
-                 Intent intent = new Intent(Intent.ACTION_CALL);
-                 intent.setData(Uri.parse("tel:" + number));
-                 if(ActivityCompat.checkSelfPermission(MainActivity.this, android.Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED)
-                 {
-                return;
-                 }
-                 startActivity(intent);
+                Intent intent = new Intent(Intent.ACTION_CALL);
+                intent.setData(Uri.parse("tel:" + number));
+                //asking permission
+                ActivityCompat.requestPermissions( MainActivity.this, new String[] {android.Manifest.permission.CALL_PHONE}, REQUEST_CALL);
+                if(ContextCompat.checkSelfPermission(MainActivity.this, android.Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+                    return;
+                }
+                startActivity(intent);
             }
         });
 
@@ -118,8 +122,9 @@ public class MainActivity extends AppCompatActivity
                 String number = "110";
                 Intent intent = new Intent(Intent.ACTION_CALL);
                 intent.setData(Uri.parse("tel:" + number));
-                if(ActivityCompat.checkSelfPermission(MainActivity.this, android.Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED)
-                {
+                //asking permission
+                ActivityCompat.requestPermissions( MainActivity.this, new String[] {android.Manifest.permission.CALL_PHONE}, REQUEST_CALL);
+                if(ContextCompat.checkSelfPermission(MainActivity.this, android.Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
                     return;
                 }
                 startActivity(intent);
@@ -134,8 +139,9 @@ public class MainActivity extends AppCompatActivity
                 String number = "155";
                 Intent intent = new Intent(Intent.ACTION_CALL);
                 intent.setData(Uri.parse("tel:" + number));
-                if(ActivityCompat.checkSelfPermission(MainActivity.this, android.Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED)
-                {
+                //asking permission
+                ActivityCompat.requestPermissions( MainActivity.this, new String[] {android.Manifest.permission.CALL_PHONE}, REQUEST_CALL);
+                if(ContextCompat.checkSelfPermission(MainActivity.this, android.Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
                     return;
                 }
                 startActivity(intent);
@@ -232,20 +238,6 @@ public class MainActivity extends AppCompatActivity
         mRecorder.start();
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
