@@ -274,6 +274,11 @@ public class MainActivity extends AppCompatActivity
             Intent goSettings = new Intent(MainActivity.this, SettingsActivity.class);
             startActivity(goSettings);
         }
+        else if (id == R.id.logout)
+        {
+            Intent logout = new Intent(MainActivity.this, Login.class);
+            startActivity(logout);
+        }
         else if (id == R.id.exit)
         {
 

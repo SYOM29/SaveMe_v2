@@ -150,6 +150,11 @@ public class SettingsActivity extends AppCompatActivity
         {
 
         }
+        else if (id == R.id.logout)
+        {
+            Intent logout = new Intent(SettingsActivity.this, Login.class);
+            startActivity(logout);
+        }
         else if (id == R.id.exit)
         {
 

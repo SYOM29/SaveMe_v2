@@ -50,7 +50,7 @@
         android:layout_marginTop="8dp"
         app:layout_constraintBottom_toBottomOf="@+id/aboutTextView"
         app:layout_constraintEnd_toStartOf="@+id/aboutTextView"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="@+id/GPSImageView"
         app:layout_constraintTop_toTopOf="@+id/aboutTextView"
         app:layout_constraintVertical_bias="0.681"
@@ -65,7 +65,7 @@
         android:layout_marginTop="8dp"
         app:layout_constraintBottom_toBottomOf="@+id/helpTextView"
         app:layout_constraintEnd_toStartOf="@+id/helpTextView"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="@+id/aboutImageView"
         app:layout_constraintTop_toTopOf="@+id/helpTextView"
         app:layout_constraintVertical_bias="0.681"
@@ -117,10 +117,10 @@
         android:textSize="20dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/editProfileTextView"
-        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/GPSUpdateTextView"
         app:layout_constraintTop_toBottomOf="@+id/editProfileTextView"
-        app:layout_constraintVertical_bias="0.789" />
+        app:layout_constraintVertical_bias="0.77" />
 
     <TextView
         android:id="@+id/helpTextView"
