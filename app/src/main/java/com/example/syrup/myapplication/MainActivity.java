@@ -54,11 +54,13 @@ public class MainActivity extends AppCompatActivity
     private ImageView police;
     private ImageView siren;
     private ImageView SOSButton;
+    private int counter = 0;
     private Toast toast;
     private MediaRecorder mRecorder;
     private String mFileName = null;
     private static final String LOG_TAG = "Record_log";
     private ProgressDialog mProgress;
+    File dir;
 
     private StorageReference storageReference;
 
@@ -91,8 +93,11 @@ public class MainActivity extends AppCompatActivity
         police = (ImageView)findViewById(R.id.policeButton);
         SOSButton = (ImageView)findViewById(R.id.SOSButton);
 
-        mFileName = Environment.getExternalStorageDirectory().getAbsolutePath();
-        mFileName += "/recorded_audio.3gp";
+        dir = new File(Environment.getExternalStorageDirectory().getAbsolutePath()+"/MyRecordings");
+        dir.mkdir();
+
+         mFileName = Environment.getExternalStorageDirectory().getAbsolutePath() +"/MyRecordings";
+         mFileName += "/Recorded_audio.mp3";
         mProgress = new ProgressDialog(this);
         storageReference = FirebaseStorage.getInstance().getReference();
 
@@ -199,12 +204,14 @@ public class MainActivity extends AppCompatActivity
     }
     private void uploadAudio()
     {
+        counter++;
         mProgress.setMessage("Uploading Audio...");
         mProgress.show();
 
-        StorageReference filepath = storageReference.child("Audio").child("new_audio.mp3");
-        Uri uri = Uri.fromFile(new File(mFileName));
 
+        StorageReference filepath = storageReference.child("Recordings").child(counter + "new_audio.mp3");
+
+        Uri uri = Uri.fromFile(new File(mFileName));
         filepath.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot)
