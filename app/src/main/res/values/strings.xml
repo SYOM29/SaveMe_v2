@@ -87,4 +87,5 @@
 
     <string name="pref_title_vibrate">Vibrate</string>
     <string name="title_activity_about">About Us</string>
+    <string name="title_activity_recordings">RecordingsActivity</string>
 </resources>

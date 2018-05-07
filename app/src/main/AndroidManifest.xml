@@ -50,6 +50,11 @@
         <activity
             android:name=".AboutActivity"
             android:label="@string/title_activity_about"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".RecordingsActivity"
+            android:label="@string/title_activity_recordings"
             android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 

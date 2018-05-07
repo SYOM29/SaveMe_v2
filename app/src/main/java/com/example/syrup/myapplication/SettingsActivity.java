@@ -16,6 +16,8 @@ import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseAuth;
+
 public class SettingsActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     //properties
@@ -108,21 +110,6 @@ public class SettingsActivity extends AppCompatActivity
         }
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
@@ -134,7 +121,8 @@ public class SettingsActivity extends AppCompatActivity
             Intent goMain = new Intent(SettingsActivity.this, MainActivity.class);
             startActivity(goMain);
         }
-        else if (id == R.id.contact_list) {
+        else if (id == R.id.contact_list)
+        {
 
         }
         else if (id == R.id.locations)
@@ -144,7 +132,8 @@ public class SettingsActivity extends AppCompatActivity
         }
         else if (id == R.id.recordings)
         {
-
+            Intent goRecordings = new Intent(SettingsActivity.this, RecordingsActivity.class);
+            startActivity(goRecordings);
         }
         else if (id == R.id.settings)
         {
@@ -152,6 +141,10 @@ public class SettingsActivity extends AppCompatActivity
         }
         else if (id == R.id.logout)
         {
+            //Signing out from Firebase
+            FirebaseAuth.getInstance().signOut();
+
+            //Intent
             Intent logout = new Intent(SettingsActivity.this, Login.class);
             startActivity(logout);
         }
