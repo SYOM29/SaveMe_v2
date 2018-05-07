@@ -73,6 +73,8 @@ public class SignIn extends AppCompatActivity implements View.OnClickListener {
     //constants
     private final String FB_STORAGE_REF = "users/";
     private final String FB_PROFILE = "profile/";
+    private final String FB_RECORDINGS = "recordings/";
+    private final String FB_CONTACT_LIST = "contactList/";
     private final int REQUEST_CODE = 2;
 
     @Override
@@ -184,6 +186,14 @@ public class SignIn extends AppCompatActivity implements View.OnClickListener {
                             myRef = storageReference.child(FB_STORAGE_REF + name + surname + "/" + FB_PROFILE).child("template.txt");
                             myRef.putBytes(b);
 
+                            //creating recordings folder in Firebase
+                            myRef = storageReference.child(FB_STORAGE_REF + name + surname + "/" + FB_RECORDINGS).child("template.txt");
+                            myRef.putBytes(b);
+
+                            //creating contact list folder in Firebase
+                            myRef = storageReference.child(FB_STORAGE_REF + name + surname + "/" + FB_CONTACT_LIST).child("template.txt");
+                            myRef.putBytes(b);
+
                             firebaseFirestore.collection("users").document( currentUser.getUid())
                                 .set(dataToSave)
                                 .addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -236,7 +246,7 @@ public class SignIn extends AppCompatActivity implements View.OnClickListener {
         if(requestCode == REQUEST_CODE && resultCode == RESULT_OK)
         {
             imgUri = data.getData();
-            imgRef = storageReference.child(FB_STORAGE_REF +  FB_PROFILE + "images").child(imgUri.getLastPathSegment());
+            imgRef = storageReference.child(FB_STORAGE_REF +  FB_PROFILE + "images").child("profilePicture" + getImageExtension(imgUri));
             imgRef.putFile(imgUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
