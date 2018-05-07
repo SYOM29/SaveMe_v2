@@ -1,28 +1,15 @@
 package com.example.syrup.myapplication;
 
-import android.Manifest;
-import android.annotation.SuppressLint;
-import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
-import android.media.MediaPlayer;
-import android.media.MediaRecorder;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.preference.DialogPreference;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
-import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -32,43 +19,23 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.storage.UploadTask;
+import java.security.acl.Group;
 
-import java.io.File;
-import java.io.IOException;
-import java.lang.Object;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener
 {
     //variable declaration
+    //foldksljfgsdflgşkdfsgklsfdjhflşkh 19.36
+    //khfkpfkpfkgh
     private ImageView ambulance;
     private ImageView fire;
     private ImageView police;
     private ImageView siren;
     private ImageView SOSButton;
-    private Toast toast;
-    private MediaRecorder mRecorder;
-    private String mFileName = null;
-    private static final String LOG_TAG = "Record_log";
-    private ProgressDialog mProgress;
-
-    private int counter = 1;
-
-    private StorageReference storageReference;
-
-    //constants
-    private final int REQUEST_CALL = 1234;
 
     //onCreate
-    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -96,96 +63,40 @@ public class MainActivity extends AppCompatActivity
         police = (ImageView)findViewById(R.id.policeButton);
         SOSButton = (ImageView)findViewById(R.id.SOSButton);
 
-        mFileName = Environment.getExternalStorageDirectory().getAbsolutePath();
-        mFileName += "/recorded_audio.3gp";
-        mProgress = new ProgressDialog(this);
-        storageReference = FirebaseStorage.getInstance().getReference();
-
         //setting listeners
         ambulance.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v)
-            {
-                String number = "112";
-                Intent intent = new Intent(Intent.ACTION_CALL);
-                intent.setData(Uri.parse("tel:" + number));
-                //asking permission
-                ActivityCompat.requestPermissions( MainActivity.this, new String[] {android.Manifest.permission.CALL_PHONE}, REQUEST_CALL);
-                if(ContextCompat.checkSelfPermission(MainActivity.this, android.Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
-                    return;
-                }
-                startActivity(intent);
+            public void onClick(View v) {
+
             }
         });
 
         fire.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v)
-            {
-                String number = "110";
-                Intent intent = new Intent(Intent.ACTION_CALL);
-                intent.setData(Uri.parse("tel:" + number));
-                //asking permission
-                ActivityCompat.requestPermissions( MainActivity.this, new String[] {android.Manifest.permission.CALL_PHONE}, REQUEST_CALL);
-                if(ContextCompat.checkSelfPermission(MainActivity.this, android.Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
-                    return;
-                }
-                startActivity(intent);
+            public void onClick(View v) {
 
             }
         });
 
         police.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v)
-            {
-                String number = "155";
-                Intent intent = new Intent(Intent.ACTION_CALL);
-                intent.setData(Uri.parse("tel:" + number));
-                //asking permission
-                ActivityCompat.requestPermissions( MainActivity.this, new String[] {android.Manifest.permission.CALL_PHONE}, REQUEST_CALL);
-                if(ContextCompat.checkSelfPermission(MainActivity.this, android.Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
-                    return;
-                }
-                startActivity(intent);
+            public void onClick(View v) {
+
             }
         });
 
         siren.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v)
-            {
-                MediaPlayer player = MediaPlayer.create(MainActivity.this, R.raw.siren);
-                player.start();
+            public void onClick(View v) {
+
             }
         });
 
-        //TODO
-        //fix recording
-        SOSButton.setOnTouchListener(new View.OnTouchListener() {
+        SOSButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public boolean onTouch(View v, MotionEvent motionEvent)
-            {
-                ActivityCompat.requestPermissions( MainActivity.this, new String[] {Manifest.permission.RECORD_AUDIO}, REQUEST_CALL);
-                if(motionEvent.getAction() == MotionEvent.ACTION_DOWN)
-                {
+            public void onClick(View v) {
 
-                    startRecording();
-                    toast = Toast.makeText(MainActivity.this, "Recording is started...",Toast.LENGTH_LONG);
-                    toast.show();
-
-                }
-                else if(motionEvent.getAction() == MotionEvent.ACTION_UP)
-                {
-                    stopRecording();
-                    toast = Toast.makeText(MainActivity.this, "Recording is stopped...",Toast.LENGTH_LONG);
-                    toast.show();
-
-                }
-                return true;
             }
-
-
         });
     }
 
@@ -199,52 +110,28 @@ public class MainActivity extends AppCompatActivity
             super.onBackPressed();
         }
     }
-    private void stopRecording()
-    {
-        mRecorder.stop();
-        mRecorder.release();
-        mRecorder = null;
 
-        uploadAudio();
-    }
-    private void uploadAudio()
-    {
-        counter++;
-        mProgress.setMessage("Uploading Audio...");
-        mProgress.show();
-
-
-        StorageReference filepath = storageReference.child("Recordings").child(counter + "new_audio.mp3");
-
-        Uri uri = Uri.fromFile(new File(mFileName));
-        filepath.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot)
-            {
-                mProgress.dismiss();
-                toast = Toast.makeText(MainActivity.this, "Recording is uploaded succesfully...",Toast.LENGTH_LONG);
-                toast.show();
-            }
-        });
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.main, menu);
+        return true;
     }
 
-    private void startRecording()
-    {
-        mRecorder = new MediaRecorder();
-        mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-        mRecorder.setOutputFormat(MediaRecorder.OutputFormat.DEFAULT);
-        mRecorder.setOutputFile(mFileName);
-        mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
 
-        try{
-            mRecorder.prepare();
-        }catch (IOException e)
-        {
-            Log.e(LOG_TAG, "prepare() failed");
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
+            return true;
         }
-        mRecorder.start();
-    }
 
+        return super.onOptionsItemSelected(item);
+    }
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
@@ -257,7 +144,8 @@ public class MainActivity extends AppCompatActivity
 
         }
         else if (id == R.id.contact_list) {
-
+            Intent goLocations = new Intent(MainActivity.this, Groups.class);
+            startActivity(goLocations);
         }
         else if (id == R.id.locations)
         {
@@ -266,18 +154,11 @@ public class MainActivity extends AppCompatActivity
         }
         else if (id == R.id.recordings)
         {
-            Intent goRecordings = new Intent(MainActivity.this, RecordingsActivity.class);
-            startActivity(goRecordings);
+
         }
         else if (id == R.id.settings)
         {
-            Intent goSettings = new Intent(MainActivity.this, SettingsActivity.class);
-            startActivity(goSettings);
-        }
-        else if (id == R.id.logout)
-        {
-            Intent logout = new Intent(MainActivity.this, Login.class);
-            startActivity(logout);
+
         }
         else if (id == R.id.exit)
         {
