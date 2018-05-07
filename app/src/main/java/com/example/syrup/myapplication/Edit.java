@@ -62,9 +62,6 @@ public class Edit extends AppCompatActivity {
         editProfile = (Button)findViewById(R.id.editProfile);
         back = (Button)findViewById(R.id.backList);
 
-
-
-
         //setting firebase
         firebaseFirestore = FirebaseFirestore.getInstance();
         firebaseAuth = FirebaseAuth.getInstance();

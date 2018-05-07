@@ -74,7 +74,8 @@ public class AboutActivity extends AppCompatActivity
             startActivity(goMain);
         }
         else if (id == R.id.contact_list) {
-
+            Intent goLocations = new Intent(AboutActivity.this, Groups.class);
+            startActivity(goLocations);
         }
         else if (id == R.id.locations)
         {

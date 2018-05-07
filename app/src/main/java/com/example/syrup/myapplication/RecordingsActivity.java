@@ -60,7 +60,8 @@ public class RecordingsActivity extends AppCompatActivity
             startActivity(goMain);
         }
         else if (id == R.id.contact_list) {
-
+            Intent goLocations = new Intent(RecordingsActivity.this, Groups.class);
+            startActivity(goLocations);
         }
         else if (id == R.id.locations)
         {
