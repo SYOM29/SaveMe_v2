@@ -37,6 +37,7 @@ import com.squareup.picasso.Picasso;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 import java.util.UUID;
 
 public class SignIn extends AppCompatActivity implements View.OnClickListener {
@@ -64,6 +65,7 @@ public class SignIn extends AppCompatActivity implements View.OnClickListener {
 
     private StorageReference storageReference;
     private StorageReference myRef;
+    private StorageReference imgRef;
 
     private Uri imgUri;
     private Uri downloadUri;
@@ -176,8 +178,11 @@ public class SignIn extends AppCompatActivity implements View.OnClickListener {
                             StorageReference groupNum = storage.getReference();
                             StorageReference imagesRef = groupNum.child("images");
 
-                            //test
-                            //myRef = storageReference.child(FB_STORAGE_REF + NAME + SURNAME + "/" + );
+                            //creating profile folder in Firebase
+                            byte[] b = new byte[20];
+                            new Random().nextBytes(b);
+                            myRef = storageReference.child(FB_STORAGE_REF + name + surname + "/" + FB_PROFILE).child("template.txt");
+                            myRef.putBytes(b);
 
                             firebaseFirestore.collection("users").document( currentUser.getUid())
                                 .set(dataToSave)
@@ -206,7 +211,6 @@ public class SignIn extends AppCompatActivity implements View.OnClickListener {
                                     "could not register", Toast.LENGTH_SHORT).show();
                     }
                 });
-
     }
 
     @Override
@@ -232,8 +236,8 @@ public class SignIn extends AppCompatActivity implements View.OnClickListener {
         if(requestCode == REQUEST_CODE && resultCode == RESULT_OK)
         {
             imgUri = data.getData();
-            myRef = storageReference.child(FB_STORAGE_REF +  FB_PROFILE + "images").child(imgUri.getLastPathSegment());
-            myRef.putFile(imgUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            imgRef = storageReference.child(FB_STORAGE_REF +  FB_PROFILE + "images").child(imgUri.getLastPathSegment());
+            imgRef.putFile(imgUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                     downloadUri = taskSnapshot.getDownloadUrl();
