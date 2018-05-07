@@ -1,5 +1,6 @@
 package com.example.syrup.myapplication;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -58,6 +59,8 @@ public class MainActivity extends AppCompatActivity
     private String mFileName = null;
     private static final String LOG_TAG = "Record_log";
     private ProgressDialog mProgress;
+
+    private int counter = 1;
 
     private StorageReference storageReference;
 
@@ -157,16 +160,19 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
+        //TODO
+        //fix recording
         SOSButton.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent motionEvent)
             {
+                ActivityCompat.requestPermissions( MainActivity.this, new String[] {Manifest.permission.RECORD_AUDIO}, REQUEST_CALL);
                 if(motionEvent.getAction() == MotionEvent.ACTION_DOWN)
                 {
-                    startRecording();
-                   toast = Toast.makeText(MainActivity.this, "Recording is started...",Toast.LENGTH_LONG);
-                   toast.show();
 
+                    startRecording();
+                    toast = Toast.makeText(MainActivity.this, "Recording is started...",Toast.LENGTH_LONG);
+                    toast.show();
 
                 }
                 else if(motionEvent.getAction() == MotionEvent.ACTION_UP)
@@ -177,7 +183,6 @@ public class MainActivity extends AppCompatActivity
 
                 }
                 return true;
-
             }
 
 
@@ -204,12 +209,14 @@ public class MainActivity extends AppCompatActivity
     }
     private void uploadAudio()
     {
+        counter++;
         mProgress.setMessage("Uploading Audio...");
         mProgress.show();
 
-        StorageReference filepath = storageReference.child("Audio").child("new_audio.mp3");
-        Uri uri = Uri.fromFile(new File(mFileName));
 
+        StorageReference filepath = storageReference.child("Recordings").child(counter + "new_audio.mp3");
+
+        Uri uri = Uri.fromFile(new File(mFileName));
         filepath.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot)

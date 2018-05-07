@@ -28,7 +28,7 @@
         tools:ignore="RtlCompat" />
 
     <ImageView
-        android:id="@+id/imageView"
+        android:id="@+id/changeProfilePicImageView"
         android:layout_width="140dp"
         android:layout_height="130dp"
         android:layout_alignParentTop="true"
@@ -48,7 +48,7 @@
         android:id="@+id/changeProfile"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/imageView"
+        android:layout_below="@+id/changeProfilePicImageView"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="17dp"
         android:background="@color/colorPrimary"
@@ -76,10 +76,9 @@
         android:id="@+id/phone"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/name"
-        android:layout_alignStart="@+id/name"
-        android:layout_below="@+id/name"
-        android:layout_marginTop="21dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginBottom="115dp"
         android:text="Phone Number"
         android:textSize="24sp" />
 
@@ -88,8 +87,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/name"
-        android:layout_toEndOf="@+id/imageView"
-        android:layout_toRightOf="@+id/imageView"
+        android:layout_toEndOf="@+id/changeProfilePicImageView"
+        android:layout_toRightOf="@+id/changeProfilePicImageView"
         android:background="@color/colorPrimary"
         android:text="EDIT"
         android:textColor="@android:color/background_light"
