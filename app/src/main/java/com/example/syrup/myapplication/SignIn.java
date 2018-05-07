@@ -42,11 +42,6 @@ import java.util.UUID;
 
 public class SignIn extends AppCompatActivity implements View.OnClickListener {
     //properties
-    private final String NAME = "Name";
-    private final String SURNAME = "Surname";
-    private final String EMAIL = "Email";
-    private final String GROUPCODE = "GroupCode";
-    private final String TAG = "userInfo";
     private Button buttonRegister;
     private ImageView profileImage;
 
@@ -71,6 +66,11 @@ public class SignIn extends AppCompatActivity implements View.OnClickListener {
     private Uri downloadUri;
 
     //constants
+    private final String NAME = "Name";
+    private final String SURNAME = "Surname";
+    private final String EMAIL = "Email";
+    private final String GROUPCODE = "GroupCode";
+    private final String TAG = "userInfo";
     private final String FB_STORAGE_REF = "users/";
     private final String FB_PROFILE = "profile/";
     private final String FB_RECORDINGS = "recordings/";
