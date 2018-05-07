@@ -123,7 +123,8 @@ public class SettingsActivity extends AppCompatActivity
         }
         else if (id == R.id.contact_list)
         {
-
+            Intent goLocations = new Intent(SettingsActivity.this, Groups.class);
+            startActivity(goLocations);
         }
         else if (id == R.id.locations)
         {

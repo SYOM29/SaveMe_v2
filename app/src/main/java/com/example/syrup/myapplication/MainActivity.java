@@ -132,11 +132,13 @@ public class MainActivity extends AppCompatActivity
         }
         else if (id == R.id.recordings)
         {
-
+            Intent goRecordings = new Intent(MainActivity.this, RecordingsActivity.class);
+            startActivity(goRecordings);
         }
         else if (id == R.id.settings)
         {
-
+            Intent goSettings = new Intent(MainActivity.this, SettingsActivity.class);
+            startActivity(goSettings);
         }
         else if (id == R.id.exit)
         {
