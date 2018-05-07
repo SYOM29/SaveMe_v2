@@ -65,7 +65,7 @@ public class Groups extends AppCompatActivity implements View.OnClickListener {
                 {
                     DocumentSnapshot document = task.getResult();
 
-                    if (document.exists())
+                    if ( document.exists() )
                     {
                         String email;
                         FirebaseUser currentUser = firebaseAuth.getCurrentUser();
@@ -75,8 +75,9 @@ public class Groups extends AppCompatActivity implements View.OnClickListener {
                         Map<String, Object> groupsCollection = new HashMap<String, Object>();
                         groupsCollection.put( currentUser.getEmail() , currentUser.getUid() );
 
-                        //create groups collection
+                        //add user to places in database
                         firebaseFirestore.collection("groups").document( groupCode)
+                                .collection("usersInGroup").document(currentUser.getUid())
                                 .set(groupsCollection)
                                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                                     @Override
@@ -90,6 +91,27 @@ public class Groups extends AppCompatActivity implements View.OnClickListener {
                                         Log.w(TAG, "Error writing document", e);
                                     }
                                 });
+                        firebaseFirestore.collection("users").document( currentUser.getUid())
+                                .collection("groups").document(groupCode)
+                                .set(groupsCollection)
+                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void aVoid) {
+                                        Log.d(TAG, "DocumentSnapshot successfully saved!");
+                                    }
+                                })
+                                .addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        Log.w(TAG, "Error writing document", e);
+                                    }
+                                });
+
+                        Toast.makeText(Groups.this,
+                                "joined successfully", Toast.LENGTH_SHORT).show();
+
+
+
                     }
 
                     else

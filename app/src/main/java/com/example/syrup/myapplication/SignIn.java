@@ -199,6 +199,24 @@ public class SignIn extends AppCompatActivity implements View.OnClickListener {
                                         }
                                     });
 
+                            Map<String, Object> justAText = new HashMap<String, Object>();
+                            justAText.put("123","123");
+                            groupsCollection.put( email , currentUser.getUid() );
+
+                            firebaseFirestore.collection("groups").document( groupCode)
+                                    .set(justAText)
+                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        @Override
+                                        public void onSuccess(Void aVoid) {
+                                            Log.d(TAG, "DocumentSnapshot successfully saved!");
+                                        }
+                                    })
+                                    .addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            Log.w(TAG, "Error writing document", e);
+                                        }
+                                    });
 
                             //start activity
                             Toast.makeText(SignIn.this,
