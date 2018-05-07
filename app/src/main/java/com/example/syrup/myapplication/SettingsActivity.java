@@ -132,7 +132,8 @@ public class SettingsActivity extends AppCompatActivity
         }
         else if (id == R.id.recordings)
         {
-
+            Intent goRecordings = new Intent(SettingsActivity.this, RecordingsActivity.class);
+            startActivity(goRecordings);
         }
         else if (id == R.id.settings)
         {

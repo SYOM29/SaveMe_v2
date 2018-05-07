@@ -71,7 +71,7 @@ public class SignIn extends AppCompatActivity implements View.OnClickListener {
     //constants
     private final String FB_STORAGE_REF = "users/";
     private final String FB_PROFILE = "profile/";
-    private final int REQUEST_CODE = 1234;
+    private final int REQUEST_CODE = 2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -232,7 +232,7 @@ public class SignIn extends AppCompatActivity implements View.OnClickListener {
         if(requestCode == REQUEST_CODE && resultCode == RESULT_OK)
         {
             imgUri = data.getData();
-            myRef = storageReference.child(FB_STORAGE_REF + FB_PROFILE + "images").child(imgUri.getLastPathSegment());
+            myRef = storageReference.child(FB_STORAGE_REF +  FB_PROFILE + "images").child(imgUri.getLastPathSegment());
             myRef.putFile(imgUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
@@ -250,5 +250,12 @@ public class SignIn extends AppCompatActivity implements View.OnClickListener {
                 }
             });
         }
+    }
+
+    public String getImageExtension( Uri uri )
+    {
+        ContentResolver contentResolver = getContentResolver();
+        MimeTypeMap mimeTypeMap = MimeTypeMap.getSingleton();
+        return mimeTypeMap.getExtensionFromMimeType(contentResolver.getType(uri));
     }
 }

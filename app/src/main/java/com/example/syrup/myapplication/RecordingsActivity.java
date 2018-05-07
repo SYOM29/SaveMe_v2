@@ -15,23 +15,16 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ImageView;
-import android.widget.TextView;
 
-public class AboutActivity extends AppCompatActivity
+import com.google.firebase.auth.FirebaseAuth;
+
+public class RecordingsActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
-    //properties
-    private ImageView logo;
-
-    private TextView projectName;
-    private TextView projectName2;
-    private TextView groupName;
-    private TextView text;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_about);
+        setContentView(R.layout.activity_recordings);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -43,13 +36,6 @@ public class AboutActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-
-        //setting the properties
-        logo = (ImageView)findViewById(R.id.logoImageView);
-        projectName = (TextView)findViewById(R.id.projectNameTextView);
-        projectName2 = (TextView)findViewById(R.id.projectNameTextView2);
-        groupName = (TextView)findViewById(R.id.groupNameTextView);
-        text = (TextView)findViewById(R.id.aboutTextView);
     }
 
     @Override
@@ -70,7 +56,7 @@ public class AboutActivity extends AppCompatActivity
 
         if (id == R.id.main_page)
         {
-            Intent goMain = new Intent(AboutActivity.this, MainActivity.class);
+            Intent goMain = new Intent(RecordingsActivity.this, MainActivity.class);
             startActivity(goMain);
         }
         else if (id == R.id.contact_list) {
@@ -78,29 +64,29 @@ public class AboutActivity extends AppCompatActivity
         }
         else if (id == R.id.locations)
         {
-            Intent goLocations = new Intent(AboutActivity.this, locations.class);
+            Intent goLocations = new Intent(RecordingsActivity.this, locations.class);
             startActivity(goLocations);
         }
         else if (id == R.id.recordings)
         {
-            Intent goRecordings = new Intent(AboutActivity.this, RecordingsActivity.class);
-            startActivity(goRecordings);
+
         }
         else if (id == R.id.settings)
         {
-            Intent goSettings = new Intent(AboutActivity.this, SettingsActivity.class);
+            Intent goSettings = new Intent(RecordingsActivity.this, SettingsActivity.class);
             startActivity(goSettings);
         }
         else if (id == R.id.logout)
         {
-            Intent logout = new Intent(AboutActivity.this, Login.class);
+            FirebaseAuth.getInstance().signOut();
+            Intent logout = new Intent(RecordingsActivity.this, Login.class);
             startActivity(logout);
         }
         else if (id == R.id.exit)
         {
 
             //exiting the app
-            final AlertDialog.Builder builder = new AlertDialog.Builder(AboutActivity.this);
+            final AlertDialog.Builder builder = new AlertDialog.Builder(RecordingsActivity.this);
             builder.setMessage("Are you sure you want to quit?");
             builder.setCancelable(true);
             builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
