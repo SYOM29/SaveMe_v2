@@ -1,7 +1,9 @@
 package com.example.syrup.myapplication;
 
 import android.app.ProgressDialog;
+import android.content.ContentResolver;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 
 import android.support.annotation.NonNull;
@@ -9,8 +11,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.webkit.MimeTypeMap;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.example.syrup.myapplication.R;
@@ -28,19 +32,23 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
+import com.squareup.picasso.Picasso;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 import java.util.UUID;
 
 public class SignIn extends AppCompatActivity implements View.OnClickListener {
-
+    //properties
     private final String NAME = "Name";
     private final String SURNAME = "Surname";
     private final String EMAIL = "Email";
     private final String GROUPCODE = "GroupCode";
     private final String TAG = "userInfo";
     private Button buttonRegister;
+    private ImageView profileImage;
 
     private EditText editTextName;
     private EditText editTextSurname;
@@ -55,6 +63,20 @@ public class SignIn extends AppCompatActivity implements View.OnClickListener {
     private FirebaseStorage storage;
     private DocumentReference mDocRef;
 
+    private StorageReference storageReference;
+    private StorageReference myRef;
+    private StorageReference imgRef;
+
+    private Uri imgUri;
+    private Uri downloadUri;
+
+    //constants
+    private final String FB_STORAGE_REF = "users/";
+    private final String FB_PROFILE = "profile/";
+    private final String FB_RECORDINGS = "recordings/";
+    private final String FB_CONTACT_LIST = "contactList/";
+    private final int REQUEST_CODE = 2;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,6 +89,7 @@ public class SignIn extends AppCompatActivity implements View.OnClickListener {
         editTextEmail     = findViewById(R.id.email);
         editTextPassword  = findViewById(R.id.password);
         editTextPassword2 = findViewById(R.id.password2);
+        profileImage = findViewById(R.id.profileImage);
 
         storage = FirebaseStorage.getInstance();
 
@@ -78,6 +101,8 @@ public class SignIn extends AppCompatActivity implements View.OnClickListener {
         firebaseAuth = FirebaseAuth.getInstance();
         firebaseFirestore = FirebaseFirestore.getInstance();
         mDocRef = FirebaseFirestore.getInstance().document("users/userInfo");
+
+        storageReference = storage.getReference();
     }
 
     private void registerUser() {
@@ -139,6 +164,7 @@ public class SignIn extends AppCompatActivity implements View.OnClickListener {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if ( task.isSuccessful() )
                         {
+                            progressDialog.dismiss();
                             //successful
                             FirebaseUser currentUser = firebaseAuth.getCurrentUser();
 
@@ -153,6 +179,20 @@ public class SignIn extends AppCompatActivity implements View.OnClickListener {
                             //creating base reference
                             StorageReference groupNum = storage.getReference();
                             StorageReference imagesRef = groupNum.child("images");
+
+                            //creating profile folder in Firebase
+                            byte[] b = new byte[20];
+                            new Random().nextBytes(b);
+                            myRef = storageReference.child(FB_STORAGE_REF + name + surname + "/" + FB_PROFILE).child("template.txt");
+                            myRef.putBytes(b);
+
+                            //creating recordings folder in Firebase
+                            myRef = storageReference.child(FB_STORAGE_REF + name + surname + "/" + FB_RECORDINGS).child("template.txt");
+                            myRef.putBytes(b);
+
+                            //creating contact list folder in Firebase
+                            myRef = storageReference.child(FB_STORAGE_REF + name + surname + "/" + FB_CONTACT_LIST).child("template.txt");
+                            myRef.putBytes(b);
 
                             firebaseFirestore.collection("users").document( currentUser.getUid())
                                 .set(dataToSave)
@@ -176,11 +216,11 @@ public class SignIn extends AppCompatActivity implements View.OnClickListener {
                             startActivity(goMainPage);
                         }
                         else
+                            progressDialog.dismiss();
                             Toast.makeText(SignIn.this,
                                     "could not register", Toast.LENGTH_SHORT).show();
                     }
                 });
-
     }
 
     @Override
@@ -189,7 +229,49 @@ public class SignIn extends AppCompatActivity implements View.OnClickListener {
         {
             registerUser();
         }
+    }
 
+    //ClickListener for adding photo
+    public void btnBrowseClick(View v)
+    {
+        Intent intent = new Intent(Intent.ACTION_PICK);
+        intent.setType("image/*");
+        startActivityForResult(intent, REQUEST_CODE);
+    }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        //TODO
+        //fix issue with adding photo to Firebase
+        //add this feature to the register button instead of working when the image is selected
+        if(requestCode == REQUEST_CODE && resultCode == RESULT_OK)
+        {
+            imgUri = data.getData();
+            imgRef = storageReference.child(FB_STORAGE_REF +  FB_PROFILE + "images").child("profilePicture" + getImageExtension(imgUri));
+            imgRef.putFile(imgUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    downloadUri = taskSnapshot.getDownloadUrl();
+
+                    Picasso.get().load(downloadUri).fit().centerCrop().into(profileImage);
+
+                    Toast.makeText(SignIn.this, "Upload done", Toast.LENGTH_LONG).show();
+
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Toast.makeText(SignIn.this, "Unable to upload", Toast.LENGTH_LONG).show();
+                }
+            });
+        }
+    }
+
+    public String getImageExtension( Uri uri )
+    {
+        ContentResolver contentResolver = getContentResolver();
+        MimeTypeMap mimeTypeMap = MimeTypeMap.getSingleton();
+        return mimeTypeMap.getExtensionFromMimeType(contentResolver.getType(uri));
     }
 }
