@@ -38,6 +38,10 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.auth.FirebaseAuth;
@@ -82,7 +86,12 @@ public class MainActivity extends AppCompatActivity
     private Sensor mAccelerometer;
     private ShakeDetector mShakeDetector;
     private boolean running ;
+    private static FirebaseUser currentUser;
+    private static FirebaseAuth firebaseAuth;
+    private static String name;
+    private static String surname;
 
+    private static DocumentReference mDocRef;
 
 
     File dir;
@@ -96,6 +105,13 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        firebaseAuth = FirebaseAuth.getInstance();
+        currentUser = firebaseAuth.getCurrentUser();
+
+        mDocRef = FirebaseFirestore.getInstance().collection("users")
+                .document(currentUser.getUid());
+
+        getName();
         //setting action bar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -202,34 +218,33 @@ public class MainActivity extends AppCompatActivity
         });
 
 
-        SOSButton.setOnClickListener(new View.OnClickListener() {
+        SOSButton.setOnTouchListener(new View.OnTouchListener() {
             @Override
-            public void onClick(View v)
+            public boolean onTouch(View v,MotionEvent event )
             {
-
-                toast = Toast.makeText(MainActivity.this, "Recording is started...",Toast.LENGTH_LONG);
+                toast = Toast.makeText(MainActivity.this, "Recording is started...", Toast.LENGTH_LONG);
                 toast.show();
+                if(event.getAction() == MotionEvent.ACTION_DOWN)
+                {
                     startRecording();
 
-
-                Thread thread = new Thread();
+                }
+                else if (event.getAction() == MotionEvent.ACTION_UP) {
+                    Thread thread = new Thread();
                     try {
 
                         sleep(6 * 1000);
                         stopRecording();
-                    }
-                    catch (Exception ex)
-                    {
+                    } catch (Exception ex) {
 
                     }
                     thread.start();
 
-
                     toast = Toast.makeText(MainActivity.this, "Recording is stopped...",Toast.LENGTH_LONG);
                     toast.show();
 
-
-
+                }
+return true;
             }
 
 
@@ -274,9 +289,9 @@ public class MainActivity extends AppCompatActivity
         mProgress.show();
 
 
-        StorageReference filepath = storageReference.child("users").child((FirebaseAuth.getInstance().getCurrentUser()).getDisplayName()).child("profile").child(System.currentTimeMillis() + "new_audio.mp3");
-        StorageReference filepath2 = storageReference.child("users").child(FirebaseAuth.getInstance().getCurrentUser().getDisplayName()).child("recordings").child(System.currentTimeMillis() + "new_audio.mp3");
-        StorageReference filepath3 = storageReference.child("users").child(FirebaseAuth.getInstance().getCurrentUser().getDisplayName()).child("contactList").child(System.currentTimeMillis() + "new_audio.mp3");
+        StorageReference filepath = storageReference.child("users").child(surname + name).child("profile").child(System.currentTimeMillis() + "new_audio.mp3");
+        StorageReference filepath2 = storageReference.child("users").child(surname + name).child("recordings").child(System.currentTimeMillis() + "new_audio.mp3");
+        StorageReference filepath3 = storageReference.child("users").child(surname + name).child("contactList").child(System.currentTimeMillis() + "new_audio.mp3");
 
         Uri uri = Uri.fromFile(new File( mFileName));
 
@@ -313,6 +328,8 @@ public class MainActivity extends AppCompatActivity
 
     private void startRecording()
     {
+
+
         mRecorder = new MediaRecorder();
         mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
         mRecorder.setOutputFormat(MediaRecorder.OutputFormat.DEFAULT);
@@ -326,6 +343,9 @@ public class MainActivity extends AppCompatActivity
             Log.e(LOG_TAG, "prepare() failed");
         }
         mRecorder.start();
+
+
+
     }
 
 
@@ -363,6 +383,19 @@ public class MainActivity extends AppCompatActivity
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
+    }
+    public static void getName()
+    {
+        mDocRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                if(documentSnapshot.exists())
+                {
+                    name = documentSnapshot.getString("Name");
+                     surname = documentSnapshot.getString("Surname");
+                }
+            }
+        });
     }
 
     @Override
