@@ -9,6 +9,8 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.hardware.Sensor;
+import android.hardware.SensorManager;
 import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.Bundle;
@@ -20,6 +22,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -35,14 +38,33 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.Object;
+import java.util.Objects;
+
+import static java.lang.Thread.sleep;;
+
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
+import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+
+
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener
 {
@@ -60,6 +82,18 @@ public class MainActivity extends AppCompatActivity
     private String mFileName = null;
     private static final String LOG_TAG = "Record_log";
     private ProgressDialog mProgress;
+    private SensorManager mSensorManager;
+    private Sensor mAccelerometer;
+    private ShakeDetector mShakeDetector;
+    private boolean running ;
+    private static FirebaseUser currentUser;
+    private static FirebaseAuth firebaseAuth;
+    private static String name;
+    private static String surname;
+
+    private static DocumentReference mDocRef;
+
+
     File dir;
 
     private StorageReference storageReference;
@@ -71,6 +105,13 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        firebaseAuth = FirebaseAuth.getInstance();
+        currentUser = firebaseAuth.getCurrentUser();
+
+        mDocRef = FirebaseFirestore.getInstance().collection("users")
+                .document(currentUser.getUid());
+
+        getName();
         //setting action bar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -93,13 +134,33 @@ public class MainActivity extends AppCompatActivity
         police = (ImageView)findViewById(R.id.policeButton);
         SOSButton = (ImageView)findViewById(R.id.SOSButton);
 
+        mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        mAccelerometer = mSensorManager
+                .getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+
+        mShakeDetector = new ShakeDetector();
+        mShakeDetector.setOnShakeListener(new ShakeDetector.OnShakeListener() {
+
+            @Override
+            public void onShake(int count) {
+                /*
+                 * The following method, "handleShakeEvent(count):" is a stub //
+                 * method you would use to setup whatever you want done once the
+                 * device has been shook.
+                 */
+                handleShakeEvent(count);
+            }
+        });
+
+
         dir = new File(Environment.getExternalStorageDirectory().getAbsolutePath()+"/MyRecordings");
         dir.mkdir();
 
          mFileName = Environment.getExternalStorageDirectory().getAbsolutePath() +"/MyRecordings";
-         mFileName += "/Recorded_audio.mp3";
+         mFileName += "/"+ System.currentTimeMillis() + "Recorded_audio.mp3";
         mProgress = new ProgressDialog(this);
         storageReference = FirebaseStorage.getInstance().getReference();
+
 
         //setting listeners
         ambulance.setOnClickListener(new View.OnClickListener() {
@@ -156,32 +217,51 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
+
         SOSButton.setOnTouchListener(new View.OnTouchListener() {
             @Override
-            public boolean onTouch(View v, MotionEvent motionEvent)
+            public boolean onTouch(View v,MotionEvent event )
             {
-                if(motionEvent.getAction() == MotionEvent.ACTION_DOWN)
+                toast = Toast.makeText(MainActivity.this, "Recording is started...", Toast.LENGTH_LONG);
+                toast.show();
+                if(event.getAction() == MotionEvent.ACTION_DOWN)
                 {
-
                     startRecording();
-                   toast = Toast.makeText(MainActivity.this, "Recording is started...",Toast.LENGTH_LONG);
-                   toast.show();
-
 
                 }
-                else if(motionEvent.getAction() == MotionEvent.ACTION_UP)
-                {
-                    stopRecording();
+                else if (event.getAction() == MotionEvent.ACTION_UP) {
+                    Thread thread = new Thread();
+                    try {
+
+                        sleep(6 * 1000);
+                        stopRecording();
+                    } catch (Exception ex) {
+
+                    }
+                    thread.start();
+
                     toast = Toast.makeText(MainActivity.this, "Recording is stopped...",Toast.LENGTH_LONG);
                     toast.show();
 
                 }
-                return true;
-
+return true;
             }
 
 
         });
+    }
+    @Override
+    public void onResume() {
+        super.onResume();
+        // Add the following line to register the Session Manager Listener onResume
+        mSensorManager.registerListener(mShakeDetector, mAccelerometer,	SensorManager.SENSOR_DELAY_UI);
+    }
+
+    @Override
+    public void onPause() {
+        // Add the following line to unregister the Sensor Manager onPause
+        mSensorManager.unregisterListener(mShakeDetector);
+        super.onPause();
     }
 
     //onBackPressed
@@ -209,15 +289,38 @@ public class MainActivity extends AppCompatActivity
         mProgress.show();
 
 
-        StorageReference filepath = storageReference.child("Recordings").child(counter + "new_audio.mp3");
+        StorageReference filepath = storageReference.child("users").child(surname + name).child("profile").child(System.currentTimeMillis() + "new_audio.mp3");
+        StorageReference filepath2 = storageReference.child("users").child(surname + name).child("recordings").child(System.currentTimeMillis() + "new_audio.mp3");
+        StorageReference filepath3 = storageReference.child("users").child(surname + name).child("contactList").child(System.currentTimeMillis() + "new_audio.mp3");
 
-        Uri uri = Uri.fromFile(new File(mFileName));
+        Uri uri = Uri.fromFile(new File( mFileName));
+
         filepath.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot)
             {
                 mProgress.dismiss();
-                toast = Toast.makeText(MainActivity.this, "Recording is uploaded succesfully...",Toast.LENGTH_LONG);
+                toast = Toast.makeText(MainActivity.this, "Recording is uploaded succesfully to your profile...",Toast.LENGTH_LONG);
+                toast.show();
+            }
+        });
+        filepath2.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot)
+            {
+                mProgress.dismiss();
+                toast = Toast.makeText(MainActivity.this, "Recording is uploaded succesfully to your recordings...",Toast.LENGTH_LONG);
+                toast.setGravity(Gravity.CENTER, 0, 0);
+                toast.show();
+            }
+        });
+        filepath3.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot)
+            {
+                mProgress.dismiss();
+                toast = Toast.makeText(MainActivity.this, "Recording is uploaded succesfully to your contact list...",Toast.LENGTH_LONG);
+
                 toast.show();
             }
         });
@@ -225,6 +328,8 @@ public class MainActivity extends AppCompatActivity
 
     private void startRecording()
     {
+
+
         mRecorder = new MediaRecorder();
         mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
         mRecorder.setOutputFormat(MediaRecorder.OutputFormat.DEFAULT);
@@ -238,13 +343,59 @@ public class MainActivity extends AppCompatActivity
             Log.e(LOG_TAG, "prepare() failed");
         }
         mRecorder.start();
+
+
+
     }
 
+
+
+    public void handleShakeEvent(int count)
+    {
+        if(count >= 5)
+        {
+
+            startRecording();
+            toast = Toast.makeText(MainActivity.this, "Recording is started...",Toast.LENGTH_LONG);
+            toast.show();
+
+
+            Thread thread = new Thread();
+            try {
+
+                sleep(6 * 1000);
+                stopRecording();
+            }
+            catch (Exception ex)
+            {
+
+            }
+            thread.start();
+
+
+            toast = Toast.makeText(MainActivity.this, "Recording is stopped...",Toast.LENGTH_LONG);
+            toast.show();
+        }
+
+    }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
+    }
+    public static void getName()
+    {
+        mDocRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                if(documentSnapshot.exists())
+                {
+                    name = documentSnapshot.getString("Name");
+                     surname = documentSnapshot.getString("Surname");
+                }
+            }
+        });
     }
 
     @Override
