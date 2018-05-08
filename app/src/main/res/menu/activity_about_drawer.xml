@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <group android:checkableBehavior="single">
+    <item
+        android:id="@+id/main_page"
+        android:icon="@drawable/ic_home_black_24dp"
+        android:title="Main Page" />
+    <item
+        android:id="@+id/contact_list"
+        android:icon="@drawable/ic_contacts_black_24dp"
+        android:title="Contact List" />
+    <item
+        android:id="@+id/locations"
+        android:icon="@drawable/ic_gps_fixed_black_24dp"
+        android:title="Locations" />
+    <item
+        android:id="@+id/recordings"
+        android:icon="@drawable/ic_settings_voice_black_24dp"
+        android:title="Recordings" />
+    <item
+        android:id="@+id/settings"
+        android:icon="@drawable/ic_settings_black_24dp"
+        android:title="Settings" />
+    <item
+        android:id="@+id/logout"
+        android:icon="@drawable/ic_perm_identity_black_24dp"
+        android:title="Logout" />
+    <item
+        android:id="@+id/exit"
+        android:icon="@drawable/ic_exit_to_app_black_24dp"
+        android:title="Exit" />
+    </group>
+</menu>

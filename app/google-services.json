@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "411102444123-k44hc985vtnostul523611c8c9d0gfd8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.syrup.myapplication",
+            "certificate_hash": "8cea8d3ea7cc99191cfa3b0cc47789cdef48779d"
+          }
+        },
+        {
           "client_id": "411102444123-qiap6k7u3rce72p24qst8j8k6rfam8sa.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {

@@ -26,6 +26,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -51,6 +52,7 @@ public class SignIn extends AppCompatActivity implements View.OnClickListener {
     private FirebaseFirestore firebaseFirestore;
     private DocumentReference mDocRef;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -71,6 +73,7 @@ public class SignIn extends AppCompatActivity implements View.OnClickListener {
         progressDialog = new ProgressDialog(this);
 
         firebaseAuth = FirebaseAuth.getInstance();
+        
         firebaseFirestore = FirebaseFirestore.getInstance();
         mDocRef = FirebaseFirestore.getInstance().document("users/userInfo");
     }
@@ -81,7 +84,7 @@ public class SignIn extends AppCompatActivity implements View.OnClickListener {
         final String email     = editTextEmail.getText().toString().trim();
         final String password  = editTextPassword.getText().toString().trim();
         final String password2 = editTextPassword2.getText().toString().trim();
-        final String groupCode = "";
+        final String groupCode = generateRandomCode();
         if (TextUtils.isEmpty(name))
         {
             Toast.makeText(this, "enter name", Toast.LENGTH_SHORT).show();
@@ -141,8 +144,8 @@ public class SignIn extends AppCompatActivity implements View.OnClickListener {
                             dataToSave.put(NAME, name);
                             dataToSave.put(SURNAME, surname);
                             dataToSave.put(EMAIL, email);
-                            dataToSave.put(GROUPCODE, groupCode);
 
+                            //add user infos
                             firebaseFirestore.collection("users").document( currentUser.getUid())
                                 .set(dataToSave)
                                 .addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -157,6 +160,65 @@ public class SignIn extends AppCompatActivity implements View.OnClickListener {
                                         Log.w(TAG, "Error writing document", e);
                                     }
                                 });
+
+                            Map<String, Object> groups = new HashMap<String, Object>();
+                            groups.put( name + "'s group " , groupCode );
+
+                            //add groups under user
+                            firebaseFirestore.collection("users").document( currentUser.getUid())
+                                    .collection("groups").document(groupCode)
+                                    .set(groups)
+                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        @Override
+                                        public void onSuccess(Void aVoid) {
+                                            Log.d(TAG, "DocumentSnapshot successfully saved!");
+                                        }
+                                    })
+                                    .addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            Log.w(TAG, "Error writing document", e);
+                                        }
+                                    });
+
+                            Map<String, Object> groupsCollection = new HashMap<String, Object>();
+                            groupsCollection.put( email , currentUser.getUid() );
+
+                            //create groups collection
+                            firebaseFirestore.collection("groups").document( groupCode)
+                                    .collection("usersInGroup").document(currentUser.getUid())
+                                    .set(groupsCollection)
+                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        @Override
+                                        public void onSuccess(Void aVoid) {
+                                            Log.d(TAG, "DocumentSnapshot successfully saved!");
+                                        }
+                                    })
+                                    .addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            Log.w(TAG, "Error writing document", e);
+                                        }
+                                    });
+
+                            Map<String, Object> justAText = new HashMap<String, Object>();
+                            justAText.put("123","123");
+                            groupsCollection.put( email , currentUser.getUid() );
+
+                            firebaseFirestore.collection("groups").document( groupCode)
+                                    .set(justAText)
+                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        @Override
+                                        public void onSuccess(Void aVoid) {
+                                            Log.d(TAG, "DocumentSnapshot successfully saved!");
+                                        }
+                                    })
+                                    .addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            Log.w(TAG, "Error writing document", e);
+                                        }
+                                    });
 
                             //start activity
                             Toast.makeText(SignIn.this,
@@ -180,5 +242,17 @@ public class SignIn extends AppCompatActivity implements View.OnClickListener {
         }
 
 
+    }
+
+    public String generateRandomCode()
+    {
+        String charPool = "1234567890qwertyuopasdfghjklizxcvbnm";
+        String result = "";
+
+        for ( int i = 0; i < 6; i++)
+        {
+            result = result + charPool.charAt( (int)( Math.random() * 36 ) );
+        }
+        return result;
     }
 }
