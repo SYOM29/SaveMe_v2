@@ -32,15 +32,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class SignIn extends AppCompatActivity implements View.OnClickListener {
-
-    public final String NAME = "Name";
-    public final String SURNAME = "Surname";
+    //AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+    private final String NAME = "Name";
+    private final String SURNAME = "Surname";
     private final String EMAIL = "Email";
     private final String GROUPCODE = "GroupCode";
     private final String TAG = "userInfo";
     private Button buttonRegister;
-    private static String name;
-    private static String surname;
+
     private EditText editTextName;
     private EditText editTextSurname;
     private EditText editTextEmail;
@@ -79,9 +78,10 @@ public class SignIn extends AppCompatActivity implements View.OnClickListener {
         mDocRef = FirebaseFirestore.getInstance().document("users/userInfo");
     }
 
+
     private void registerUser() {
-         name      = editTextName.getText().toString().trim();
-        surname   = editTextSurname.getText().toString().trim();
+        final String name      = editTextName.getText().toString().trim();
+        final String surname   = editTextSurname.getText().toString().trim();
         final String email     = editTextEmail.getText().toString().trim();
         final String password  = editTextPassword.getText().toString().trim();
         final String password2 = editTextPassword2.getText().toString().trim();
@@ -233,14 +233,6 @@ public class SignIn extends AppCompatActivity implements View.OnClickListener {
                     }
                 });
 
-    }
-    public static String getName()
-    {
-        return name;
-    }
-    public static String getSurname()
-    {
-        return surname;
     }
 
     @Override
