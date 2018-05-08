@@ -26,6 +26,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -72,6 +73,7 @@ public class SignIn extends AppCompatActivity implements View.OnClickListener {
         progressDialog = new ProgressDialog(this);
 
         firebaseAuth = FirebaseAuth.getInstance();
+        
         firebaseFirestore = FirebaseFirestore.getInstance();
         mDocRef = FirebaseFirestore.getInstance().document("users/userInfo");
     }
