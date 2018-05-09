@@ -92,7 +92,7 @@ public class locations extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if ( check) {
-                    String strnum = "+905459414494"; //Contact List Numbers
+                    String strnum = "+905316410668"; //Contact List Numbers
                     Uri smsToUri = Uri.parse("smsto:" + strnum);
                     Intent intent = new Intent(
                             android.content.Intent.ACTION_SENDTO, smsToUri);

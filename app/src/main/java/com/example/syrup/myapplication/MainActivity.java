@@ -11,6 +11,8 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
+import android.location.Location;
+import android.location.LocationManager;
 import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.Bundle;
@@ -243,6 +245,23 @@ public class MainActivity extends AppCompatActivity
                     toast = Toast.makeText(MainActivity.this, "Recording is stopped...",Toast.LENGTH_LONG);
                     toast.show();
 
+
+                    LocationManager lm = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
+                    @SuppressLint("MissingPermission") Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                    double longitude = location.getLongitude();
+                    double latitude = location.getLatitude();
+
+                    String strnum = "+905316410668"; //Contact List Numbers
+                    Uri smsToUri = Uri.parse("smsto:" + strnum);
+                    Intent intent = new Intent(
+                            android.content.Intent.ACTION_SENDTO, smsToUri);
+
+                    String link = "http://maps.google.com/maps?q=" + latitude + "," + longitude; //User's Location
+                    // message = message.replace("%s", StoresMessage.m_storeName);
+                    intent.putExtra("sms_body", link);
+                    startActivity(intent);
+
+
                 }
 return true;
             }
@@ -375,6 +394,22 @@ return true;
 
             toast = Toast.makeText(MainActivity.this, "Recording is stopped...",Toast.LENGTH_LONG);
             toast.show();
+
+            LocationManager lm = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
+            @SuppressLint("MissingPermission") Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            double longitude = location.getLongitude();
+            double latitude = location.getLatitude();
+
+            String strnum = "+905316410668"; //Contact List Numbers
+            Uri smsToUri = Uri.parse("smsto:" + strnum);
+            Intent intent = new Intent(
+                    android.content.Intent.ACTION_SENDTO, smsToUri);
+
+            String link = "http://maps.google.com/maps?q=" + latitude + "," + longitude; //User's Location
+            // message = message.replace("%s", StoresMessage.m_storeName);
+            intent.putExtra("sms_body", link);
+            startActivity(intent);
+
         }
 
     }
