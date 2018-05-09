@@ -155,6 +155,7 @@ public class locations extends AppCompatActivity {
             public void onClick(View view) {
                 //noinspection MissingPermission
                 locationManager.requestLocationUpdates("gps", 5000, 0, listener);
+                t.setText("Getting your coordinates...");
             }
         });
     }
