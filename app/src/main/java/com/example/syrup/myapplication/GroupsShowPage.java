@@ -65,6 +65,7 @@ public class GroupsShowPage extends AppCompatActivity {
                                 LayoutInflater layoutInflater = getLayoutInflater();
                                 View view;
 
+                                
                                 view = layoutInflater.inflate(R.layout.text_layout, parentLayout, false);
 
                                 // In order to get the view we have to use the new view with text_layout in it

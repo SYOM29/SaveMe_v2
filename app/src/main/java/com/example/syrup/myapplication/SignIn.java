@@ -45,6 +45,7 @@ public class SignIn extends AppCompatActivity implements View.OnClickListener {
     private EditText editTextEmail;
     private EditText editTextPassword;
     private EditText editTextPassword2;
+    private EditText phoneNum;
 
     private ProgressDialog progressDialog;
     private FirebaseAuth firebaseAuth;
@@ -66,6 +67,7 @@ public class SignIn extends AppCompatActivity implements View.OnClickListener {
         editTextEmail     = findViewById(R.id.email);
         editTextPassword  = findViewById(R.id.password);
         editTextPassword2 = findViewById(R.id.password2);
+        phoneNum          = findViewById(R.id.phone);
 
 
         buttonRegister.setOnClickListener(this);
@@ -86,6 +88,8 @@ public class SignIn extends AppCompatActivity implements View.OnClickListener {
         final String email     = editTextEmail.getText().toString().trim();
         final String password  = editTextPassword.getText().toString().trim();
         final String password2 = editTextPassword2.getText().toString().trim();
+        final String phone     = phoneNum.getText().toString().trim();
+
         final String groupCode = generateRandomCode();
         if (TextUtils.isEmpty(name))
         {
@@ -128,6 +132,13 @@ public class SignIn extends AppCompatActivity implements View.OnClickListener {
             return;
         }
 
+        if (TextUtils.isEmpty(phone))
+        {
+            Toast.makeText(this, "enter phone num", Toast.LENGTH_SHORT).show();
+            //stopping the function execution
+            return;
+        }
+
         //if validations are ok ->
 
         progressDialog.setMessage("registering user...");
@@ -146,6 +157,7 @@ public class SignIn extends AppCompatActivity implements View.OnClickListener {
                             dataToSave.put(NAME, name);
                             dataToSave.put(SURNAME, surname);
                             dataToSave.put(EMAIL, email);
+                            dataToSave.put("Phone", phone);
 
                             //add user infos
                             firebaseFirestore.collection("users").document( currentUser.getUid())
@@ -184,7 +196,8 @@ public class SignIn extends AppCompatActivity implements View.OnClickListener {
                                     });
 
                             Map<String, Object> groupsCollection = new HashMap<String, Object>();
-                            groupsCollection.put( email , currentUser.getUid() );
+                            groupsCollection.put( currentUser.getUid() , phone  );
+                            groupsCollection.put( surname , email  );
 
                             //create groups collection
                             firebaseFirestore.collection("groups").document( groupCode)
