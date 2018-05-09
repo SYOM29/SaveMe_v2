@@ -32,7 +32,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class SignIn extends AppCompatActivity implements View.OnClickListener {
-
+    //AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
     private final String NAME = "Name";
     private final String SURNAME = "Surname";
     private final String EMAIL = "Email";
@@ -55,6 +55,7 @@ public class SignIn extends AppCompatActivity implements View.OnClickListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_in);
 
@@ -77,6 +78,7 @@ public class SignIn extends AppCompatActivity implements View.OnClickListener {
         firebaseFirestore = FirebaseFirestore.getInstance();
         mDocRef = FirebaseFirestore.getInstance().document("users/userInfo");
     }
+
 
     private void registerUser() {
         final String name      = editTextName.getText().toString().trim();
