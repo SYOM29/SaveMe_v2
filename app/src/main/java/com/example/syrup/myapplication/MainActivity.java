@@ -422,6 +422,7 @@ return true;
         }
         else if (id == R.id.settings)
         {
+            
             Intent goSettings = new Intent(MainActivity.this, SettingsActivity.class);
             startActivity(goSettings);
         }
