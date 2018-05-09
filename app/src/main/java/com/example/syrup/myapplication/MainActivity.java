@@ -15,9 +15,12 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.media.MediaRecorder;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.preference.DialogPreference;
+import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
@@ -25,6 +28,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -37,13 +41,19 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.auth.FirebaseAuth;
@@ -94,6 +104,12 @@ public class MainActivity extends AppCompatActivity
     private static String surname;
 
     private static DocumentReference mDocRef;
+    private static DocumentReference mDocRef2;
+
+    String phones = "";
+
+
+
 
 
     File dir;
@@ -112,6 +128,10 @@ public class MainActivity extends AppCompatActivity
 
         mDocRef = FirebaseFirestore.getInstance().collection("users")
                 .document(currentUser.getUid());
+
+
+
+
 
         getName();
         //setting action bar
@@ -224,6 +244,8 @@ public class MainActivity extends AppCompatActivity
             @Override
             public boolean onTouch(View v,MotionEvent event )
             {
+
+
                 toast = Toast.makeText(MainActivity.this, "Recording is started...", Toast.LENGTH_LONG);
                 toast.show();
                 if(event.getAction() == MotionEvent.ACTION_DOWN)
@@ -251,7 +273,7 @@ public class MainActivity extends AppCompatActivity
                     double longitude = location.getLongitude();
                     double latitude = location.getLatitude();
 
-                    String strnum = "+905316410668"; //Contact List Numbers
+                    String strnum = getNums(); //Contact List Numbers
                     Uri smsToUri = Uri.parse("smsto:" + strnum);
                     Intent intent = new Intent(
                             android.content.Intent.ACTION_SENDTO, smsToUri);
@@ -441,6 +463,8 @@ return true;
 
         }
         else if (id == R.id.contact_list) {
+            Intent goLocations = new Intent(MainActivity.this, Groups.class);
+            startActivity(goLocations);
 
         }
         else if (id == R.id.locations)
@@ -483,5 +507,80 @@ return true;
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    public String getNums(){
+
+
+
+        final FirebaseFirestore firebaseFirestore;
+        firebaseFirestore = FirebaseFirestore.getInstance();
+
+        firebaseFirestore.collection("users").document(currentUser.getUid())
+                .collection("groups")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+
+                            for (final QueryDocumentSnapshot document1 : task.getResult()) {
+
+                                String documentID = document1.getId();
+                                //TODO
+                                firebaseFirestore.collection("groups").document(documentID)
+                                        .collection("usersInGroup")
+                                        .get()
+                                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                            @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
+                                            @Override
+                                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                                if (task.isSuccessful()) {
+
+                                                    for (final QueryDocumentSnapshot document2 : task.getResult()) {
+
+
+                                                        //TODO
+                                                        mDocRef2 = FirebaseFirestore.getInstance().collection("groups")
+                                                                .document(document1.getId()).collection( "usersInGroup")
+                                                        .document(document2.getId());
+
+                                                        mDocRef2.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                                            @Override
+                                                            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                                                if ( documentSnapshot.exists()) {
+                                                                String phone = documentSnapshot.getString(document2.getId());
+
+                                                                phones = phone +  ";" + phones ;
+                                                                }
+                                                            }
+                                                        });
+
+
+
+                                                    }
+                                                }
+
+                                                else {
+                                                    Log.d("UserInfo", "Error getting documents: ", task.getException());
+                                                }
+                                            }
+                                        });
+
+
+
+                            }
+                        }
+
+                        else {
+                            Log.d("UserInfo", "Error getting documents: ", task.getException());
+                        }
+                    }
+                });
+
+        Toast.makeText(MainActivity.this,
+                phones, Toast.LENGTH_SHORT).show();
+        return phones;
     }
 }
