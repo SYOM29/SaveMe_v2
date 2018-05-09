@@ -11,15 +11,11 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
-import android.location.Location;
-import android.location.LocationManager;
 import android.media.MediaRecorder;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.preference.DialogPreference;
-import android.support.annotation.RequiresApi;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
@@ -94,8 +90,6 @@ public class MainActivity extends AppCompatActivity
     private static FirebaseAuth firebaseAuth;
     private static String name;
     private static String surname;
-    private double myLatitude;
-    private double myLongitude;
 
     private static DocumentReference mDocRef;
 
@@ -105,7 +99,6 @@ public class MainActivity extends AppCompatActivity
     private StorageReference storageReference;
 
     //onCreate
-    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -123,6 +116,7 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         toolbar.setBackground(new ColorDrawable(Color.parseColor("#0c5774")));
+
 
         //setting navigation drawer
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -249,22 +243,6 @@ public class MainActivity extends AppCompatActivity
 
                     toast = Toast.makeText(MainActivity.this, "Recording is stopped...",Toast.LENGTH_LONG);
                     toast.show();
-
-
-
-                    String strnum = "+905459414494"; //Contact List Numbers
-                    Uri smsToUri = Uri.parse("smsto:" + strnum);
-                    Intent intent = new Intent(
-                            android.content.Intent.ACTION_SENDTO, smsToUri);
-
-                    String link = "http://maps.google.com/maps?q=" + myLatitude + "," + myLongitude; //User's Location
-                    // message = message.replace("%s", StoresMessage.m_storeName);
-                    intent.putExtra("sms_body", link);
-                    startActivity(intent);
-
-
-
-
 
                 }
 return true;
@@ -398,8 +376,6 @@ return true;
 
             toast = Toast.makeText(MainActivity.this, "Recording is stopped...",Toast.LENGTH_LONG);
             toast.show();
-
-
         }
 
     }
@@ -431,7 +407,8 @@ return true;
 
         }
         else if (id == R.id.contact_list) {
-
+            Intent goContactList = new Intent(MainActivity.this, Groups.class);
+            startActivity(goContactList);
         }
         else if (id == R.id.locations)
         {
@@ -440,11 +417,14 @@ return true;
         }
         else if (id == R.id.recordings)
         {
-
+            Intent goRecordings = new Intent(MainActivity.this, RecordingsActivity.class);
+            startActivity(goRecordings);
         }
         else if (id == R.id.settings)
         {
-
+            
+            Intent goSettings = new Intent(MainActivity.this, SettingsActivity.class);
+            startActivity(goSettings);
         }
         else if (id == R.id.exit)
         {
