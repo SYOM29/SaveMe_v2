@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -44,7 +45,7 @@ public class GroupsShowPage extends AppCompatActivity {
 
     }
 
-    public static void listAllGroups()
+    public void listAllGroups()
     {
         firebaseFirestore.collection("users").document(currentUser.getUid())
                 .collection("groups")
@@ -60,9 +61,22 @@ public class GroupsShowPage extends AppCompatActivity {
                                 String documentID = document.getId();
                                 //TODO
 
+                                LinearLayout parentLayout = (LinearLayout)findViewById(R.id.layout);
+                                LayoutInflater layoutInflater = getLayoutInflater();
+                                View view;
+
+                                view = layoutInflater.inflate(R.layout.text_layout, parentLayout, false);
+
+                                // In order to get the view we have to use the new view with text_layout in it
+                                TextView textView = (TextView)view.findViewById(R.id.text);
+                                textView.setText( "" + document.getId() );
+
+                                // Add the text view to the parent layout
+                                parentLayout.addView(textView);
+                                textView.setTextSize(35);
+                                textView.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
 
 
-                                Log.d(TAG, document.getId() + " => " + document.getData());
                             }
                         }
 
@@ -71,6 +85,11 @@ public class GroupsShowPage extends AppCompatActivity {
                         }
                     }
                 });
+    }
+
+    public void makeOpearations()
+    {
+
     }
 
 
