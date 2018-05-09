@@ -121,7 +121,6 @@ public class locations extends AppCompatActivity {
                 else {
                     warning.show();
                 }
-
             }
         });
 
