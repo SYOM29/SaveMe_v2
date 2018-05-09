@@ -407,7 +407,8 @@ return true;
 
         }
         else if (id == R.id.contact_list) {
-
+            Intent goContactList = new Intent(MainActivity.this, Groups.class);
+            startActivity(goContactList);
         }
         else if (id == R.id.locations)
         {
@@ -416,11 +417,13 @@ return true;
         }
         else if (id == R.id.recordings)
         {
-
+            Intent goRecordings = new Intent(MainActivity.this, RecordingsActivity.class);
+            startActivity(goRecordings);
         }
         else if (id == R.id.settings)
         {
-
+            Intent goSettings = new Intent(MainActivity.this, SettingsActivity.class);
+            startActivity(goSettings);
         }
         else if (id == R.id.exit)
         {
