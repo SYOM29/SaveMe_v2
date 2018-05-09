@@ -36,6 +36,7 @@ public class locations extends AppCompatActivity {
     Snackbar warning;
     double myLongitude;
     double myLatitude;
+    private final int REQUEST_CALL = 1234;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -155,6 +156,7 @@ public class locations extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 //noinspection MissingPermission
+                ActivityCompat.requestPermissions( locations.this, new String[] {android.Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_CALL);
                 locationManager.requestLocationUpdates("gps", 5000, 0, listener);
             }
         });
