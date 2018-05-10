@@ -18,6 +18,8 @@ import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseAuth;
+
 public class AboutActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     //properties
@@ -94,6 +96,10 @@ public class AboutActivity extends AppCompatActivity
         }
         else if (id == R.id.logout)
         {
+            //Signing out from Firebase
+            FirebaseAuth.getInstance().signOut();
+
+            //Intent
             Intent logout = new Intent(AboutActivity.this, Login.class);
             startActivity(logout);
         }

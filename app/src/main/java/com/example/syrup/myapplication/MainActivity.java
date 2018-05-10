@@ -1,6 +1,8 @@
 package com.example.syrup.myapplication;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -11,11 +13,17 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
+import android.media.MediaPlayer;
+import android.location.Location;
+import android.location.LocationManager;
 import android.media.MediaRecorder;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.preference.DialogPreference;
+import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
@@ -23,6 +31,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -35,13 +44,19 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.auth.FirebaseAuth;
@@ -52,6 +67,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.Object;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import static java.lang.Thread.sleep;;
@@ -69,8 +86,6 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener
 {
     //variable declaration
-    //foldksljfgsdflgşkdfsgklsfdjhflşkh 19.36
-    //khfkpfkpfkgh
     private ImageView ambulance;
     private ImageView fire;
     private ImageView police;
@@ -92,6 +107,17 @@ public class MainActivity extends AppCompatActivity
     private static String surname;
 
     private static DocumentReference mDocRef;
+    private static DocumentReference mDocRef2;
+
+    String phones = "";
+
+
+
+
+    //constants
+    private final int REQUEST_CALL = 1234;
+    private final String[] permissions = {Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission
+            .RECORD_AUDIO, Manifest.permission.ACCESS_NETWORK_STATE};
 
 
     File dir;
@@ -110,6 +136,10 @@ public class MainActivity extends AppCompatActivity
 
         mDocRef = FirebaseFirestore.getInstance().collection("users")
                 .document(currentUser.getUid());
+
+
+
+
 
         getName();
         //setting action bar
@@ -161,7 +191,6 @@ public class MainActivity extends AppCompatActivity
         mProgress = new ProgressDialog(this);
         storageReference = FirebaseStorage.getInstance().getReference();
 
-
         //setting listeners
         ambulance.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -170,9 +199,10 @@ public class MainActivity extends AppCompatActivity
                 String number = "112";
                  Intent intent = new Intent(Intent.ACTION_CALL);
                  intent.setData(Uri.parse("tel:" + number));
+                 ActivityCompat.requestPermissions( MainActivity.this, new String[] {android.Manifest.permission.CALL_PHONE}, REQUEST_CALL);
                  if(ActivityCompat.checkSelfPermission(MainActivity.this, android.Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED)
                  {
-                return;
+                    return;
                  }
                  startActivity(intent);
             }
@@ -185,6 +215,7 @@ public class MainActivity extends AppCompatActivity
                 String number = "110";
                 Intent intent = new Intent(Intent.ACTION_CALL);
                 intent.setData(Uri.parse("tel:" + number));
+                ActivityCompat.requestPermissions( MainActivity.this, new String[] {android.Manifest.permission.CALL_PHONE}, REQUEST_CALL);
                 if(ActivityCompat.checkSelfPermission(MainActivity.this, android.Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED)
                 {
                     return;
@@ -201,7 +232,8 @@ public class MainActivity extends AppCompatActivity
                 String number = "155";
                 Intent intent = new Intent(Intent.ACTION_CALL);
                 intent.setData(Uri.parse("tel:" + number));
-                if(ActivityCompat.checkSelfPermission(MainActivity.this, android.Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED)
+                ActivityCompat.requestPermissions( MainActivity.this, new String[] {Manifest.permission.CALL_PHONE}, REQUEST_CALL);
+                if(ActivityCompat.checkSelfPermission(MainActivity.this, android.Manifest.permission.ACCESS_NETWORK_STATE) != PackageManager.PERMISSION_GRANTED)
                 {
                     return;
                 }
@@ -213,7 +245,8 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View v)
             {
-
+                MediaPlayer mediaPlayer = MediaPlayer.create(MainActivity.this, R.raw.siren);
+                mediaPlayer.start();
             }
         });
 
@@ -222,8 +255,20 @@ public class MainActivity extends AppCompatActivity
             @Override
             public boolean onTouch(View v,MotionEvent event )
             {
+
+
                 toast = Toast.makeText(MainActivity.this, "Recording is started...", Toast.LENGTH_LONG);
                 toast.show();
+
+                if( arePermissionsEnabled() )
+                {
+//
+                }
+                else {
+                    requestMultiplePermissions();
+                }
+
+
                 if(event.getAction() == MotionEvent.ACTION_DOWN)
                 {
                     startRecording();
@@ -242,6 +287,23 @@ public class MainActivity extends AppCompatActivity
 
                     toast = Toast.makeText(MainActivity.this, "Recording is stopped...",Toast.LENGTH_LONG);
                     toast.show();
+
+
+                    LocationManager lm = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
+                    @SuppressLint("MissingPermission") Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                    double longitude = location.getLongitude();
+                    double latitude = location.getLatitude();
+
+                    String strnum = getNums(); //Contact List Numbers
+                    Uri smsToUri = Uri.parse("smsto:" + strnum);
+                    Intent intent = new Intent(
+                            android.content.Intent.ACTION_SENDTO, smsToUri);
+
+                    String link = "http://maps.google.com/maps?q=" + latitude + "," + longitude; //User's Location
+                    // message = message.replace("%s", StoresMessage.m_storeName);
+                    intent.putExtra("sms_body", link);
+                    startActivity(intent);
+
 
                 }
 return true;
@@ -293,7 +355,20 @@ return true;
         StorageReference filepath2 = storageReference.child("users").child(surname + name).child("recordings").child(System.currentTimeMillis() + "new_audio.mp3");
         StorageReference filepath3 = storageReference.child("users").child(surname + name).child("contactList").child(System.currentTimeMillis() + "new_audio.mp3");
 
+        //test
+        StorageReference g = storageReference.child("users").child("nullnull").child("recordings").child(".mp3");
+
         Uri uri = Uri.fromFile(new File( mFileName));
+
+        g.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot)
+            {
+                mProgress.dismiss();
+                toast = Toast.makeText(MainActivity.this, "Recording is uploaded succesfully to your profile...",Toast.LENGTH_LONG);
+                toast.show();
+            }
+        });
 
         filepath.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
@@ -328,7 +403,6 @@ return true;
 
     private void startRecording()
     {
-
 
         mRecorder = new MediaRecorder();
         mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
@@ -375,6 +449,22 @@ return true;
 
             toast = Toast.makeText(MainActivity.this, "Recording is stopped...",Toast.LENGTH_LONG);
             toast.show();
+
+            LocationManager lm = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
+            @SuppressLint("MissingPermission") Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            double longitude = location.getLongitude();
+            double latitude = location.getLatitude();
+
+            String strnum = "+905316410668"; //Contact List Numbers
+            Uri smsToUri = Uri.parse("smsto:" + strnum);
+            Intent intent = new Intent(
+                    android.content.Intent.ACTION_SENDTO, smsToUri);
+
+            String link = "http://maps.google.com/maps?q=" + latitude + "," + longitude; //User's Location
+            // message = message.replace("%s", StoresMessage.m_storeName);
+            intent.putExtra("sms_body", link);
+            startActivity(intent);
+
         }
 
     }
@@ -393,8 +483,6 @@ return true;
         });
     }
 
-
-
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
@@ -406,6 +494,8 @@ return true;
 
         }
         else if (id == R.id.contact_list) {
+            Intent goLocations = new Intent(MainActivity.this, Groups.class);
+            startActivity(goLocations);
 
         }
         else if (id == R.id.locations)
@@ -415,11 +505,22 @@ return true;
         }
         else if (id == R.id.recordings)
         {
-
+            Intent goRecordings = new Intent(MainActivity.this, RecordingsActivity.class);
+            startActivity(goRecordings);
         }
         else if (id == R.id.settings)
         {
+            Intent goSettings = new Intent(MainActivity.this, SettingsActivity.class);
+            startActivity(goSettings);
+        }
+        else if (id == R.id.logout)
+        {
+            //Signing out from Firebase
+            FirebaseAuth.getInstance().signOut();
 
+            //Intent
+            Intent logout = new Intent(MainActivity.this, Login.class);
+            startActivity(logout);
         }
         else if (id == R.id.exit)
         {
@@ -448,5 +549,123 @@ return true;
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    private boolean arePermissionsEnabled()
+    {
+        for(String permission : permissions){
+            if(checkSelfPermission(permission) != PackageManager.PERMISSION_GRANTED)
+                return false;
+        }
+        return true;
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    private void requestMultiplePermissions(){
+        List<String> remainingPermissions = new ArrayList<>();
+        for (String permission : permissions) {
+            if (checkSelfPermission(permission) != PackageManager.PERMISSION_GRANTED) {
+                remainingPermissions.add(permission);
+            }
+        }
+        requestPermissions(remainingPermissions.toArray(new String[remainingPermissions.size()]), 101);
+    }
+
+    @TargetApi(Build.VERSION_CODES.M)
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,@NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == 101) {
+            for (int i = 0; i < grantResults.length; i++) {
+                if (grantResults[i] != PackageManager.PERMISSION_GRANTED) {
+                    if (shouldShowRequestPermissionRationale(permissions[i])) {
+                        new AlertDialog.Builder(this)
+                                .setMessage("Your error message here")
+                                .setPositiveButton("Allow", (dialog, which) -> requestMultiplePermissions())
+                                .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
+                                .create()
+                                .show();
+                    }
+                    return;
+                }
+            }
+            //all is good, continue flow
+        }
+    }
+    public String getNums()
+        {
+
+
+
+        final FirebaseFirestore firebaseFirestore;
+        firebaseFirestore = FirebaseFirestore.getInstance();
+
+        firebaseFirestore.collection("users").document(currentUser.getUid())
+                .collection("groups")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+
+                            for (final QueryDocumentSnapshot document1 : task.getResult()) {
+
+                                String documentID = document1.getId();
+                                //TODO
+                                firebaseFirestore.collection("groups").document(documentID)
+                                        .collection("usersInGroup")
+                                        .get()
+                                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                            @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
+                                            @Override
+                                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                                if (task.isSuccessful()) {
+
+                                                    for (final QueryDocumentSnapshot document2 : task.getResult()) {
+
+
+                                                        //TODO
+                                                        mDocRef2 = FirebaseFirestore.getInstance().collection("groups")
+                                                                .document(document1.getId()).collection( "usersInGroup")
+                                                        .document(document2.getId());
+
+                                                        mDocRef2.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                                            @Override
+                                                            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                                                if ( documentSnapshot.exists()) {
+                                                                String phone = documentSnapshot.getString(document2.getId());
+
+                                                                phones = phone +  ";" + phones ;
+                                                                }
+                                                            }
+                                                        });
+
+
+
+                                                    }
+                                                }
+
+                                                else {
+                                                    Log.d("UserInfo", "Error getting documents: ", task.getException());
+                                                }
+                                            }
+                                        });
+
+
+
+                            }
+                        }
+
+                        else {
+                            Log.d("UserInfo", "Error getting documents: ", task.getException());
+                        }
+                    }
+                });
+
+        Toast.makeText(MainActivity.this,
+                phones, Toast.LENGTH_SHORT).show();
+        return phones;
     }
 }
