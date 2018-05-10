@@ -106,7 +106,8 @@ public class MainActivity extends AppCompatActivity
     private static DocumentReference mDocRef;
     private static DocumentReference mDocRef2;
 
-    String phones = "";
+    private String phones = "";
+    private StringBuilder fields = new StringBuilder("");
 
 
 
@@ -520,67 +521,43 @@ return true;
                 .collection("groups")
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
 
-                            for (final QueryDocumentSnapshot document1 : task.getResult()) {
+                                final String documentID1 = document.getId();
 
-                                String documentID = document1.getId();
-                                //TODO
-                                firebaseFirestore.collection("groups").document(documentID)
+                                firebaseFirestore.collection("groups").document(documentID1)
                                         .collection("usersInGroup")
                                         .get()
                                         .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                                            @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
                                             @Override
                                             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                                                 if (task.isSuccessful()) {
-
-                                                    for (final QueryDocumentSnapshot document2 : task.getResult()) {
-
-
-                                                        //TODO
-                                                        mDocRef2 = FirebaseFirestore.getInstance().collection("groups")
-                                                                .document(document1.getId()).collection( "usersInGroup")
-                                                        .document(document2.getId());
-
-                                                        mDocRef2.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                                                            @Override
-                                                            public void onSuccess(DocumentSnapshot documentSnapshot) {
-                                                                if ( documentSnapshot.exists()) {
-                                                                String phone = documentSnapshot.getString(document2.getId());
-
-                                                                phones = phone +  ";" + phones ;
-                                                                }
-                                                            }
-                                                        });
+                                                    for (QueryDocumentSnapshot document : task.getResult()) {
 
 
+                                                        String documentID2 = document.getId();
+
+                                                        fields.append(document.get(documentID2)).append(";");
+
+                                                        Log.d("info", "phones: " + fields, task.getException());
 
                                                     }
-                                                }
-
-                                                else {
-                                                    Log.d("UserInfo", "Error getting documents: ", task.getException());
+                                                } else {
+                                                    Log.d("info", "Error getting documents: ", task.getException());
                                                 }
                                             }
                                         });
-
-
-
                             }
-                        }
-
-                        else {
-                            Log.d("UserInfo", "Error getting documents: ", task.getException());
+                        } else {
+                            Log.d("info", "Error getting documents: ", task.getException());
                         }
                     }
                 });
 
-        Toast.makeText(MainActivity.this,
-                phones, Toast.LENGTH_SHORT).show();
-        return phones;
+        Log.d("info", "phones: " + fields);
+        return fields.toString();
     }
 }

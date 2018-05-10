@@ -33,6 +33,7 @@ public class Groups extends AppCompatActivity implements View.OnClickListener {
     private FirebaseFirestore firebaseFirestore;
     private final String TAG = "groupCode";
     private FirebaseAuth firebaseAuth;
+    private String phone;
 
 
     @Override
@@ -70,9 +71,28 @@ public class Groups extends AppCompatActivity implements View.OnClickListener {
                             String email;
                             FirebaseUser currentUser = firebaseAuth.getCurrentUser();
 
+                            DocumentReference docRef = firebaseFirestore.collection("users").document(currentUser.getUid());
+
+                            docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                @Override
+                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                    if (task.isSuccessful()) {
+                                        DocumentSnapshot document = task.getResult();
+                                        if (document.exists()) {
+                                            phone = (String)document.get("Phone");
+                                        } else {
+                                            Log.d(TAG, "No such document");
+                                        }
+                                    } else {
+                                        Log.d(TAG, "get failed with ", task.getException());
+                                    }
+                                }
+                            });
+
+
 
                             Map<String, Object> groupsCollection = new HashMap<String, Object>();
-                            groupsCollection.put(currentUser.getEmail(), currentUser.getUid());
+                            groupsCollection.put(currentUser.getUid(), phone );
 
                             //add user to places in database
                             firebaseFirestore.collection("groups").document(groupCode)
