@@ -36,7 +36,6 @@ public class locations extends AppCompatActivity {
     Snackbar warning;
     double myLongitude;
     double myLatitude;
-    private final int REQUEST_CALL = 1234;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -93,8 +92,8 @@ public class locations extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if ( check) {
-
-                    String strnum = "+905459414494"; //Contact List Numbers
+                    MainActivity main = new MainActivity();
+                    String strnum = main.getNums(); //Contact List Numbers
                     Uri smsToUri = Uri.parse("smsto:" + strnum);
                     Intent intent = new Intent(
                             android.content.Intent.ACTION_SENDTO, smsToUri);
@@ -123,10 +122,13 @@ public class locations extends AppCompatActivity {
                 else {
                     warning.show();
                 }
+
             }
         });
 
     }
+
+
 
 
     @Override
@@ -156,7 +158,6 @@ public class locations extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 //noinspection MissingPermission
-                ActivityCompat.requestPermissions( locations.this, new String[] {android.Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_CALL);
                 locationManager.requestLocationUpdates("gps", 5000, 0, listener);
             }
         });

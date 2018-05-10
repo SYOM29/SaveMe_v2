@@ -1,8 +1,6 @@
 package com.example.syrup.myapplication;
 
-import android.Manifest;
 import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -13,7 +11,6 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
-import android.media.MediaPlayer;
 import android.location.Location;
 import android.location.LocationManager;
 import android.media.MediaRecorder;
@@ -67,8 +64,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.Object;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 import static java.lang.Thread.sleep;;
@@ -86,6 +81,8 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener
 {
     //variable declaration
+    //foldksljfgsdflgşkdfsgklsfdjhflşkh 19.36
+    //khfkpfkpfkgh
     private ImageView ambulance;
     private ImageView fire;
     private ImageView police;
@@ -113,11 +110,6 @@ public class MainActivity extends AppCompatActivity
 
 
 
-
-    //constants
-    private final int REQUEST_CALL = 1234;
-    private final String[] permissions = {Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission
-            .RECORD_AUDIO, Manifest.permission.ACCESS_NETWORK_STATE};
 
 
     File dir;
@@ -191,6 +183,7 @@ public class MainActivity extends AppCompatActivity
         mProgress = new ProgressDialog(this);
         storageReference = FirebaseStorage.getInstance().getReference();
 
+
         //setting listeners
         ambulance.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -199,10 +192,9 @@ public class MainActivity extends AppCompatActivity
                 String number = "112";
                  Intent intent = new Intent(Intent.ACTION_CALL);
                  intent.setData(Uri.parse("tel:" + number));
-                 ActivityCompat.requestPermissions( MainActivity.this, new String[] {android.Manifest.permission.CALL_PHONE}, REQUEST_CALL);
                  if(ActivityCompat.checkSelfPermission(MainActivity.this, android.Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED)
                  {
-                    return;
+                return;
                  }
                  startActivity(intent);
             }
@@ -215,7 +207,6 @@ public class MainActivity extends AppCompatActivity
                 String number = "110";
                 Intent intent = new Intent(Intent.ACTION_CALL);
                 intent.setData(Uri.parse("tel:" + number));
-                ActivityCompat.requestPermissions( MainActivity.this, new String[] {android.Manifest.permission.CALL_PHONE}, REQUEST_CALL);
                 if(ActivityCompat.checkSelfPermission(MainActivity.this, android.Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED)
                 {
                     return;
@@ -232,8 +223,7 @@ public class MainActivity extends AppCompatActivity
                 String number = "155";
                 Intent intent = new Intent(Intent.ACTION_CALL);
                 intent.setData(Uri.parse("tel:" + number));
-                ActivityCompat.requestPermissions( MainActivity.this, new String[] {Manifest.permission.CALL_PHONE}, REQUEST_CALL);
-                if(ActivityCompat.checkSelfPermission(MainActivity.this, android.Manifest.permission.ACCESS_NETWORK_STATE) != PackageManager.PERMISSION_GRANTED)
+                if(ActivityCompat.checkSelfPermission(MainActivity.this, android.Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED)
                 {
                     return;
                 }
@@ -245,8 +235,7 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View v)
             {
-                MediaPlayer mediaPlayer = MediaPlayer.create(MainActivity.this, R.raw.siren);
-                mediaPlayer.start();
+
             }
         });
 
@@ -259,16 +248,6 @@ public class MainActivity extends AppCompatActivity
 
                 toast = Toast.makeText(MainActivity.this, "Recording is started...", Toast.LENGTH_LONG);
                 toast.show();
-
-                if( arePermissionsEnabled() )
-                {
-//
-                }
-                else {
-                    requestMultiplePermissions();
-                }
-
-
                 if(event.getAction() == MotionEvent.ACTION_DOWN)
                 {
                     startRecording();
@@ -355,20 +334,7 @@ return true;
         StorageReference filepath2 = storageReference.child("users").child(surname + name).child("recordings").child(System.currentTimeMillis() + "new_audio.mp3");
         StorageReference filepath3 = storageReference.child("users").child(surname + name).child("contactList").child(System.currentTimeMillis() + "new_audio.mp3");
 
-        //test
-        StorageReference g = storageReference.child("users").child("nullnull").child("recordings").child(".mp3");
-
         Uri uri = Uri.fromFile(new File( mFileName));
-
-        g.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot)
-            {
-                mProgress.dismiss();
-                toast = Toast.makeText(MainActivity.this, "Recording is uploaded succesfully to your profile...",Toast.LENGTH_LONG);
-                toast.show();
-            }
-        });
 
         filepath.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
@@ -403,6 +369,7 @@ return true;
 
     private void startRecording()
     {
+
 
         mRecorder = new MediaRecorder();
         mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
@@ -483,6 +450,8 @@ return true;
         });
     }
 
+
+
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
@@ -505,22 +474,11 @@ return true;
         }
         else if (id == R.id.recordings)
         {
-            Intent goRecordings = new Intent(MainActivity.this, RecordingsActivity.class);
-            startActivity(goRecordings);
+
         }
         else if (id == R.id.settings)
         {
-            Intent goSettings = new Intent(MainActivity.this, SettingsActivity.class);
-            startActivity(goSettings);
-        }
-        else if (id == R.id.logout)
-        {
-            //Signing out from Firebase
-            FirebaseAuth.getInstance().signOut();
 
-            //Intent
-            Intent logout = new Intent(MainActivity.this, Login.class);
-            startActivity(logout);
         }
         else if (id == R.id.exit)
         {
@@ -551,50 +509,7 @@ return true;
         return true;
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.M)
-    private boolean arePermissionsEnabled()
-    {
-        for(String permission : permissions){
-            if(checkSelfPermission(permission) != PackageManager.PERMISSION_GRANTED)
-                return false;
-        }
-        return true;
-    }
-
-    @RequiresApi(api = Build.VERSION_CODES.M)
-    private void requestMultiplePermissions(){
-        List<String> remainingPermissions = new ArrayList<>();
-        for (String permission : permissions) {
-            if (checkSelfPermission(permission) != PackageManager.PERMISSION_GRANTED) {
-                remainingPermissions.add(permission);
-            }
-        }
-        requestPermissions(remainingPermissions.toArray(new String[remainingPermissions.size()]), 101);
-    }
-
-    @TargetApi(Build.VERSION_CODES.M)
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,@NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == 101) {
-            for (int i = 0; i < grantResults.length; i++) {
-                if (grantResults[i] != PackageManager.PERMISSION_GRANTED) {
-                    if (shouldShowRequestPermissionRationale(permissions[i])) {
-                        new AlertDialog.Builder(this)
-                                .setMessage("Your error message here")
-                                .setPositiveButton("Allow", (dialog, which) -> requestMultiplePermissions())
-                                .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
-                                .create()
-                                .show();
-                    }
-                    return;
-                }
-            }
-            //all is good, continue flow
-        }
-    }
-    public String getNums()
-        {
+    public String getNums(){
 
 
 

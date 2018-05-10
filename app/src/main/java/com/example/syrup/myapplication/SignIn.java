@@ -54,6 +54,7 @@ public class SignIn extends AppCompatActivity implements View.OnClickListener {
     private DocumentReference mDocRef;
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -218,7 +219,7 @@ public class SignIn extends AppCompatActivity implements View.OnClickListener {
 
                             Map<String, Object> justAText = new HashMap<String, Object>();
                             justAText.put("123","123");
-                            groupsCollection.put( email , currentUser.getUid() );
+                            groupsCollection.put( currentUser.getUid() , phone );
 
                             firebaseFirestore.collection("groups").document( groupCode)
                                     .set(justAText)
