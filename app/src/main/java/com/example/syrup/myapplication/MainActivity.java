@@ -107,7 +107,7 @@ public class MainActivity extends AppCompatActivity
     private static DocumentReference mDocRef2;
 
     private String phones = "";
-    private StringBuilder fields = new StringBuilder("");
+    private static StringBuilder fields = new StringBuilder("");
 
 
 
@@ -130,7 +130,10 @@ public class MainActivity extends AppCompatActivity
         mDocRef = FirebaseFirestore.getInstance().collection("users")
                 .document(currentUser.getUid());
 
-
+        getNums();
+        Log.d("info", "get nums koydum: " + fields);
+        getField();
+        Log.d("info", "get field koydum: " + fields);
 
 
 
@@ -274,7 +277,13 @@ public class MainActivity extends AppCompatActivity
                     double longitude = location.getLongitude();
                     double latitude = location.getLatitude();
 
-                    String strnum = getNums(); //Contact List Numbers
+                    StringBuilder strnum = new StringBuilder("");
+
+                    strnum = strnum.append( fields ); //Contact List Numbers
+
+
+                    Log.d("info", "AAAAAAAAAAAAAAA: " + strnum);
+                    Log.d("info", "BBBBBBBBBBBBBBBB: " + fields);
                     Uri smsToUri = Uri.parse("smsto:" + strnum);
                     Intent intent = new Intent(
                             android.content.Intent.ACTION_SENDTO, smsToUri);
@@ -510,7 +519,7 @@ return true;
         return true;
     }
 
-    public String getNums(){
+    public static String getNums(){
 
 
 
@@ -528,27 +537,32 @@ return true;
 
                                 final String documentID1 = document.getId();
 
+
                                 firebaseFirestore.collection("groups").document(documentID1)
                                         .collection("usersInGroup")
                                         .get()
                                         .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+
                                             @Override
                                             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                                                 if (task.isSuccessful()) {
                                                     for (QueryDocumentSnapshot document : task.getResult()) {
 
+                                                        StringBuilder theField = new StringBuilder("");
 
                                                         String documentID2 = document.getId();
 
-                                                        fields.append(document.get(documentID2)).append(";");
-
-                                                        Log.d("info", "phones: " + fields, task.getException());
-
+                                                        theField.append(document.get(documentID2)).append(";");
+                                                        Log.d("info", "theField: " + theField);
+                                                        Log.d("info", "fields: " + fields);
+                                                        setField(theField);
+                                                        Log.d("info", "fields in method " + fields);
                                                     }
                                                 } else {
                                                     Log.d("info", "Error getting documents: ", task.getException());
                                                 }
                                             }
+
                                         });
                             }
                         } else {
@@ -557,7 +571,21 @@ return true;
                     }
                 });
 
-        Log.d("info", "phones: " + fields);
+
         return fields.toString();
     }
+
+    public static void setField(StringBuilder builder)
+    {
+        fields = fields.append(builder);
+        Log.d("info", "after setField: " + fields);
+    }
+
+    public StringBuilder getField()
+    {
+        getNums();
+        Log.d("info", "after getFieldÇ: " + fields);
+        return fields;
+    }
+
 }
