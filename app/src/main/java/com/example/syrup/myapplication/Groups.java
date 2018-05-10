@@ -55,14 +55,14 @@ public class Groups extends AppCompatActivity implements View.OnClickListener {
 
     }
 
-    public static String setPhone( String thePhone)
+    public String setPhone( String thePhone)
     {
         phone = thePhone;
         return phone;
 
     }
 
-    public static String getPhone()
+    public String getPhone()
     {
         return phone;
     }
@@ -88,14 +88,16 @@ public class Groups extends AppCompatActivity implements View.OnClickListener {
                             DocumentReference docRef = firebaseFirestore.collection("users").document(currentUser.getUid());
 
                             docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                String aPhone;
                                 @Override
                                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                                     if (task.isSuccessful()) {
                                         DocumentSnapshot document = task.getResult();
                                         if (document.exists()) {
 
-                                            String aPhone = (String)document.get("Phone");
+                                            aPhone = (String)document.get("Phone");
                                             Log.d(TAG, "phone : " + aPhone );
+                                            phone = aPhone;
                                             setPhone(aPhone);
 
 
