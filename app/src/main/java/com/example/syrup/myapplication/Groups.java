@@ -33,7 +33,7 @@ public class Groups extends AppCompatActivity implements View.OnClickListener {
     private FirebaseFirestore firebaseFirestore;
     private final String TAG = "groupCode";
     private FirebaseAuth firebaseAuth;
-    private String phone;
+    private static String phone;
 
 
     @Override
@@ -51,6 +51,20 @@ public class Groups extends AppCompatActivity implements View.OnClickListener {
         enterGroupCode.setOnClickListener(this);
         myGroups.setOnClickListener(this);
 
+
+
+    }
+
+    public static String setPhone( String thePhone)
+    {
+        phone = thePhone;
+        return phone;
+
+    }
+
+    public static String getPhone()
+    {
+        return phone;
     }
 
     @Override
@@ -79,7 +93,12 @@ public class Groups extends AppCompatActivity implements View.OnClickListener {
                                     if (task.isSuccessful()) {
                                         DocumentSnapshot document = task.getResult();
                                         if (document.exists()) {
-                                            phone = (String)document.get("Phone");
+
+                                            String aPhone = (String)document.get("Phone");
+                                            Log.d(TAG, "phone : " + aPhone );
+                                            setPhone(aPhone);
+
+
                                         } else {
                                             Log.d(TAG, "No such document");
                                         }
@@ -90,9 +109,11 @@ public class Groups extends AppCompatActivity implements View.OnClickListener {
                             });
 
 
+                            String phoneNum = getPhone();
+                            Log.d(TAG, "phoneNum : " + phoneNum );
 
                             Map<String, Object> groupsCollection = new HashMap<String, Object>();
-                            groupsCollection.put(currentUser.getUid(), phone );
+                            groupsCollection.put(currentUser.getUid(), phoneNum );
 
                             //add user to places in database
                             firebaseFirestore.collection("groups").document(groupCode)
