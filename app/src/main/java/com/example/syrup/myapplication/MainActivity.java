@@ -423,7 +423,7 @@ return true;
             double longitude = location.getLongitude();
             double latitude = location.getLatitude();
 
-            String strnum = "+905316410668"; //Contact List Numbers
+            String strnum = getNums(); //Contact List Numbers
             Uri smsToUri = Uri.parse("smsto:" + strnum);
             Intent intent = new Intent(
                     android.content.Intent.ACTION_SENDTO, smsToUri);
