@@ -21,6 +21,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -34,6 +35,9 @@ public class Groups extends AppCompatActivity implements View.OnClickListener {
     private final String TAG = "groupCode";
     private FirebaseAuth firebaseAuth;
     private static String phone;
+    private static String anyPhone;
+    private MyContainer myContainer;
+
 
 
     @Override
@@ -50,22 +54,58 @@ public class Groups extends AppCompatActivity implements View.OnClickListener {
         firebaseAuth      = FirebaseAuth.getInstance();
         enterGroupCode.setOnClickListener(this);
         myGroups.setOnClickListener(this);
+        getPhoneNum();
 
 
 
     }
 
-    public String setPhone( String thePhone)
+    public String getPhoneNum()
     {
+        FirebaseUser currentUser = firebaseAuth.getCurrentUser();
+        DocumentReference docRef = firebaseFirestore.collection("users").document(currentUser.getUid());
+
+        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()) {
+                        String aPhone;
+                        aPhone = (String)document.get("Phone");
+                        Log.d(TAG, "phone : " + aPhone );
+
+                        myContainer = new MyContainer(phone);
+                        phone = aPhone;
+                        setPhone(aPhone);
+
+
+                    } else {
+                        Log.d(TAG, "No such document");
+                    }
+                } else {
+                    Log.d(TAG, "get failed with ", task.getException());
+                }
+            }
+        });
+
+        return getPhone();
+    }
+
+    public static String setPhone( String thePhone)
+    {
+        anyPhone = thePhone;
         phone = thePhone;
         return phone;
 
     }
 
-    public String getPhone()
+    public static String getPhone()
     {
         return phone;
     }
+
 
     @Override
     public void onClick(View view) {
@@ -85,37 +125,14 @@ public class Groups extends AppCompatActivity implements View.OnClickListener {
                             String email;
                             FirebaseUser currentUser = firebaseAuth.getCurrentUser();
 
-                            DocumentReference docRef = firebaseFirestore.collection("users").document(currentUser.getUid());
-
-                            docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                                String aPhone;
-                                @Override
-                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                    if (task.isSuccessful()) {
-                                        DocumentSnapshot document = task.getResult();
-                                        if (document.exists()) {
-
-                                            aPhone = (String)document.get("Phone");
-                                            Log.d(TAG, "phone : " + aPhone );
-                                            phone = aPhone;
-                                            setPhone(aPhone);
 
 
-                                        } else {
-                                            Log.d(TAG, "No such document");
-                                        }
-                                    } else {
-                                        Log.d(TAG, "get failed with ", task.getException());
-                                    }
-                                }
-                            });
 
+                            Log.d(TAG, "phoneNum : " + myContainer.getStr() );
 
-                            String phoneNum = getPhone();
-                            Log.d(TAG, "phoneNum : " + phoneNum );
-
+                            Log.d(TAG, "anyPhone : " + anyPhone );
                             Map<String, Object> groupsCollection = new HashMap<String, Object>();
-                            groupsCollection.put(currentUser.getUid(), phoneNum );
+                            groupsCollection.put(currentUser.getUid(), phone );
 
                             //add user to places in database
                             firebaseFirestore.collection("groups").document(groupCode)
@@ -171,5 +188,21 @@ public class Groups extends AppCompatActivity implements View.OnClickListener {
         }
     }
 
+
+    public class MyContainer
+    {
+        String str;
+
+        MyContainer( String string )
+        {
+
+            str = string;
+        }
+
+        public String getStr()
+        {
+            return str;
+        }
+    }
 
 }
