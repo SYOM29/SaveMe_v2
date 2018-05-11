@@ -130,6 +130,7 @@ public class MainActivity extends AppCompatActivity
      * @param savedInstanceState
      * @return void
      */
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
