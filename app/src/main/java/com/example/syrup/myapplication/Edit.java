@@ -19,6 +19,11 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * This class is used to change users properties
+ * @author SYRUP group: Siyovush Kadyrov, Emre Tolga Ayan, Atakan Bora Karacalioglu, Can Aybalik, Sertac Cebeci, Noman Aslam
+ * @version 1.0
+ */
 public class Edit extends AppCompatActivity {
     //properties
     private ImageView changeProfilePic;
@@ -47,7 +52,12 @@ public class Edit extends AppCompatActivity {
         return true;
     }
 
-    @Override
+    /**
+     * This method creates environment for user to edit his profile
+     * @Override
+     * @param savedInstanceState
+     * @return void
+     */
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit);

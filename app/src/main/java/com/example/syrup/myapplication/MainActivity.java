@@ -13,6 +13,7 @@ import android.hardware.Sensor;
 import android.hardware.SensorManager;
 import android.location.Location;
 import android.location.LocationManager;
+import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.Build;
@@ -76,28 +77,37 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
 
-
+/**
+ * This class creates main page of the program
+ * Main page consists of widgets: ambulance, police, siren, fire and SOSButton
+ * @author SYRUP group: Siyovush Kadyrov, Emre Tolga Ayan, Atakan Bora Karacalioglu, Can Aybalik, Sertac Cebeci, Noman Aslam
+ * @version 1.0
+ */
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener
 {
-    //variable declaration
-    //foldksljfgsdflgşkdfsgklsfdjhflşkh 19.36
-    //khfkpfkpfkgh
+    //variables
+    //Widgets
     private ImageView ambulance;
     private ImageView fire;
     private ImageView police;
     private ImageView siren;
     private ImageView SOSButton;
-    private int counter = 0;
+
+    //other properties
     private Toast toast;
     private MediaRecorder mRecorder;
     private String mFileName = null;
-    private static final String LOG_TAG = "Record_log";
     private ProgressDialog mProgress;
     private SensorManager mSensorManager;
     private Sensor mAccelerometer;
     private ShakeDetector mShakeDetector;
-    private boolean running ;
+    private String phones = "";
+    private SirenService sirenService;
+    private int counter = 0;
+
+    //Firebase
+    private StorageReference storageReference;
     private static FirebaseUser currentUser;
     private static FirebaseAuth firebaseAuth;
     private static String name;
@@ -106,34 +116,32 @@ public class MainActivity extends AppCompatActivity
     private static DocumentReference mDocRef;
     private static DocumentReference mDocRef2;
 
-    String phones = "";
-
-
-
-
+    //constants
+    private static final String LOG_TAG = "Record_log";
 
     File dir;
 
-    private StorageReference storageReference;
-
-    //onCreate
-    @SuppressLint("ClickableViewAccessibility")
-    @Override
+    /**
+     * This method is called when this activity is called
+     * creates Navigation Drawer menu, widgets
+     * sets ClickListeners for the widgets
+     * @SuppressLint("ClickableViewAccessibility")
+     * @Override
+     * @param savedInstanceState
+     * @return void
+     */
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        //setting Firebase
         firebaseAuth = FirebaseAuth.getInstance();
         currentUser = firebaseAuth.getCurrentUser();
 
         mDocRef = FirebaseFirestore.getInstance().collection("users")
                 .document(currentUser.getUid());
-
-
-
-
-
         getName();
+
         //setting action bar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -150,11 +158,14 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         //setting the variables
-        ambulance = (ImageView)findViewById(R.id.ambulanceButton);
-        siren = (ImageView)findViewById(R.id.sirenButton);
-        fire = (ImageView)findViewById(R.id.fireButton);
-        police = (ImageView)findViewById(R.id.policeButton);
-        SOSButton = (ImageView)findViewById(R.id.SOSButton);
+        ambulance = (ImageView) findViewById(R.id.ambulanceButton);
+        siren = (ImageView) findViewById(R.id.sirenButton);
+        fire = (ImageView) findViewById(R.id.fireButton);
+        police = (ImageView) findViewById(R.id.policeButton);
+        SOSButton = (ImageView) findViewById(R.id.SOSButton);
+
+        //sirenService
+        sirenService = new SirenService(MainActivity.this);
 
         mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         mAccelerometer = mSensorManager
@@ -175,40 +186,36 @@ public class MainActivity extends AppCompatActivity
         });
 
 
-        dir = new File(Environment.getExternalStorageDirectory().getAbsolutePath()+"/MyRecordings");
+        dir = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/MyRecordings");
         dir.mkdir();
 
-         mFileName = Environment.getExternalStorageDirectory().getAbsolutePath() +"/MyRecordings";
-         mFileName += "/"+ System.currentTimeMillis() + "Recorded_audio.mp3";
+        mFileName = Environment.getExternalStorageDirectory().getAbsolutePath() + "/MyRecordings";
+        mFileName += "/" + System.currentTimeMillis() + "Recorded_audio.mp3";
         mProgress = new ProgressDialog(this);
         storageReference = FirebaseStorage.getInstance().getReference();
 
 
-        //setting listeners
+        //setting listeners for widgets
         ambulance.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v)
-            {
+            public void onClick(View v) {
                 String number = "112";
-                 Intent intent = new Intent(Intent.ACTION_CALL);
-                 intent.setData(Uri.parse("tel:" + number));
-                 if(ActivityCompat.checkSelfPermission(MainActivity.this, android.Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED)
-                 {
-                return;
-                 }
-                 startActivity(intent);
+                Intent intent = new Intent(Intent.ACTION_CALL);
+                intent.setData(Uri.parse("tel:" + number));
+                if (ActivityCompat.checkSelfPermission(MainActivity.this, android.Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+                    return;
+                }
+                startActivity(intent);
             }
         });
 
         fire.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v)
-            {
+            public void onClick(View v) {
                 String number = "110";
                 Intent intent = new Intent(Intent.ACTION_CALL);
                 intent.setData(Uri.parse("tel:" + number));
-                if(ActivityCompat.checkSelfPermission(MainActivity.this, android.Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED)
-                {
+                if (ActivityCompat.checkSelfPermission(MainActivity.this, android.Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
                     return;
                 }
                 startActivity(intent);
@@ -218,13 +225,11 @@ public class MainActivity extends AppCompatActivity
 
         police.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v)
-            {
+            public void onClick(View v) {
                 String number = "155";
                 Intent intent = new Intent(Intent.ACTION_CALL);
                 intent.setData(Uri.parse("tel:" + number));
-                if(ActivityCompat.checkSelfPermission(MainActivity.this, android.Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED)
-                {
+                if (ActivityCompat.checkSelfPermission(MainActivity.this, android.Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
                     return;
                 }
                 startActivity(intent);
@@ -233,27 +238,28 @@ public class MainActivity extends AppCompatActivity
 
         siren.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v)
-            {
-
+            public void onClick(View v) {
+                counter++;
+                if(counter % 2 == 1)
+                {
+                    startService(new Intent(MainActivity.this, SirenService.class));
+                } else if (counter % 2 == 0)
+                {
+                    stopService(new Intent(MainActivity.this, SirenService.class));
+                }
             }
         });
 
 
         SOSButton.setOnTouchListener(new View.OnTouchListener() {
             @Override
-            public boolean onTouch(View v,MotionEvent event )
-            {
-
-
+            public boolean onTouch(View v, MotionEvent event) {
                 toast = Toast.makeText(MainActivity.this, "Recording is started...", Toast.LENGTH_LONG);
                 toast.show();
-                if(event.getAction() == MotionEvent.ACTION_DOWN)
-                {
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
                     startRecording();
 
-                }
-                else if (event.getAction() == MotionEvent.ACTION_UP) {
+                } else if (event.getAction() == MotionEvent.ACTION_UP) {
                     Thread thread = new Thread();
                     try {
 
@@ -264,11 +270,11 @@ public class MainActivity extends AppCompatActivity
                     }
                     thread.start();
 
-                    toast = Toast.makeText(MainActivity.this, "Recording is stopped...",Toast.LENGTH_LONG);
+                    toast = Toast.makeText(MainActivity.this, "Recording is stopped...", Toast.LENGTH_LONG);
                     toast.show();
 
 
-                    LocationManager lm = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
+                    LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
                     @SuppressLint("MissingPermission") Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
                     double longitude = location.getLongitude();
                     double latitude = location.getLatitude();
@@ -278,35 +284,46 @@ public class MainActivity extends AppCompatActivity
                     Intent intent = new Intent(
                             android.content.Intent.ACTION_SENDTO, smsToUri);
 
-                    String link = "http://maps.google.com/maps?q=" + latitude + "," + longitude; //User's Location
+                    String link = "http://maps.google.com/maps?q=" + latitude + "," + longitude + "\n" + "For recording please go to the recordings page"; //User's Location
                     // message = message.replace("%s", StoresMessage.m_storeName);
                     intent.putExtra("sms_body", link);
                     startActivity(intent);
 
 
                 }
-return true;
+                return true;
             }
-
-
         });
     }
-    @Override
+
+    /**
+     * This method is used to resume recording
+     * @param
+     * @Override
+     * @return void
+     */
     public void onResume() {
         super.onResume();
-        // Add the following line to register the Session Manager Listener onResume
         mSensorManager.registerListener(mShakeDetector, mAccelerometer,	SensorManager.SENSOR_DELAY_UI);
     }
 
-    @Override
+    /**
+     * This method is used to pause recording
+     * @param
+     * @Override
+     * @return void
+     */
     public void onPause() {
-        // Add the following line to unregister the Sensor Manager onPause
         mSensorManager.unregisterListener(mShakeDetector);
         super.onPause();
     }
 
-    //onBackPressed
-    @Override
+    /**
+     * This method is used to open Navigation Drawer Menu
+     * @param
+     * @Override
+     * @return void
+     */
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
@@ -315,6 +332,13 @@ return true;
             super.onBackPressed();
         }
     }
+
+    /**
+     * This method is used to stop recording
+     * @param
+     * @Override
+     * @return void
+     */
     private void stopRecording()
     {
         mRecorder.stop();
@@ -323,9 +347,15 @@ return true;
 
         uploadAudio();
     }
+
+    /**
+     * This method is used to upload recording
+     * @param
+     * @Override
+     * @return void
+     */
     private void uploadAudio()
     {
-        counter++;
         mProgress.setMessage("Uploading Audio...");
         mProgress.show();
 
@@ -367,6 +397,12 @@ return true;
         });
     }
 
+    /**
+     * This method is used to start recording
+     * @param
+     * @Override
+     * @return void
+     */
     private void startRecording()
     {
 
@@ -389,8 +425,12 @@ return true;
 
     }
 
-
-
+    /**
+     * This method is used to handle the shake event in main activity
+     * @param
+     * @Override
+     * @return void
+     */
     public void handleShakeEvent(int count)
     {
         if(count >= 5)
@@ -436,6 +476,12 @@ return true;
 
     }
 
+    /**
+     * This method is used to get the names of the users from firebase
+     * @param
+     * @Override
+     * @return void
+     */
     public static void getName()
     {
         mDocRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
@@ -450,10 +496,13 @@ return true;
         });
     }
 
-
-
-    @SuppressWarnings("StatementWithEmptyBody")
-    @Override
+    /**
+     * This method is used to get the names of the users from firebase
+     * @param item
+     * @SuppressWarnings("StatementWithEmptyBody")
+     * @Override
+     * @return void
+     */
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
@@ -474,11 +523,22 @@ return true;
         }
         else if (id == R.id.recordings)
         {
-
+            Intent goRecordings = new Intent(MainActivity.this, RecordingsActivity.class);
+            startActivity(goRecordings);
         }
         else if (id == R.id.settings)
         {
+            Intent goSettings = new Intent(MainActivity.this, SettingsActivity.class);
+            startActivity(goSettings);
+        }
+        else if (id == R.id.logout)
+        {
+            //Signing out from Firebase
+            FirebaseAuth.getInstance().signOut();
 
+            //Intent
+            Intent logout = new Intent(MainActivity.this, Login.class);
+            startActivity(logout);
         }
         else if (id == R.id.exit)
         {
@@ -509,10 +569,14 @@ return true;
         return true;
     }
 
-    public String getNums(){
-
-
-
+    /**
+     * This method is used to get the numbers of the users to send SMS notification
+     * @param
+     * @Override
+     * @return String
+     */
+    public String getNums()
+    {
         final FirebaseFirestore firebaseFirestore;
         firebaseFirestore = FirebaseFirestore.getInstance();
 
@@ -556,9 +620,6 @@ return true;
                                                                 }
                                                             }
                                                         });
-
-
-
                                                     }
                                                 }
 
@@ -567,9 +628,6 @@ return true;
                                                 }
                                             }
                                         });
-
-
-
                             }
                         }
 

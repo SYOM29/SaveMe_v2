@@ -57,6 +57,10 @@
             android:label="@string/title_activity_groups"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".locations" />
+        <activity
+            android:name=".GroupsShowPage"
+            android:label="@string/title_activity_groups"
+            android:theme="@style/AppTheme.NoActionBar" />
     </application>
 
 </manifest>

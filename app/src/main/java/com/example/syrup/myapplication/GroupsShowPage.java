@@ -21,15 +21,26 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+/**
+ * This class shows groups the user is currently in
+ * @author SYRUP group: Siyovush Kadyrov, Emre Tolga Ayan, Atakan Bora Karacalioglu, Can Aybalik, Sertac Cebeci, Noman Aslam
+ * @version 1.0
+ */
 public class GroupsShowPage extends AppCompatActivity {
-
+    //properties
     private static FirebaseUser currentUser;
     private static FirebaseFirestore firebaseFirestore;
     private static FirebaseAuth firebaseAuth;
+
+    //constants
     private static final String TAG = "groups";
 
-
-    @Override
+    /**
+     * This method creates environment for the user to join to groups
+     * @Override
+     * @param savedInstanceState
+     * @return void
+     */
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
@@ -45,6 +56,12 @@ public class GroupsShowPage extends AppCompatActivity {
 
     }
 
+    /**
+     * This method lists all the groups
+     * @Override
+     * @param
+     * @return void
+     */
     public void listAllGroups()
     {
         firebaseFirestore.collection("users").document(currentUser.getUid())

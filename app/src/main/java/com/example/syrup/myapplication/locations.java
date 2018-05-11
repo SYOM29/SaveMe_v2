@@ -1,3 +1,9 @@
+/**
+ * This class tracks user's coordinates
+ * User's coordinates can be sent to contact list via SMS or open Google Maps to show current position
+ * @author SYRUP group: Siyovush Kadyrov, Emre Tolga Ayan, Atakan Bora Karacalioglu, Can Aybalik, Sertac Cebeci, Noman Aslam
+ * @version 1.0
+ */
 package com.example.syrup.myapplication;
 
 
@@ -21,23 +27,27 @@ import android.widget.Button;
 import android.widget.TextView;
 
 /**
- *
+ * Gets user's location by request
  */
 public class locations extends AppCompatActivity {
+    //properties
+    private boolean check;
+    private Button b;
+    private TextView t;
+    private Button view;
+    private Button sms;
+    private LocationManager locationManager;
+    private LocationListener listener;
+    private Snackbar warning;
+    private double myLongitude;
+    private double myLatitude;
 
-
-    boolean check;
-    Button b;
-    TextView t;
-    Button view;
-    Button sms;
-    LocationManager locationManager;
-    LocationListener listener;
-    Snackbar warning;
-    double myLongitude;
-    double myLatitude;
-
-    @Override
+    /**
+     * Creates locations page environment
+     * @Override
+     * @param savedInstanceState
+     * @return void
+     */
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
@@ -56,6 +66,10 @@ public class locations extends AppCompatActivity {
 
 
         listener = new LocationListener() {
+            /**
+             * Updates coordinates on location changed
+             * @param location user's location
+             */
             @Override
             public void onLocationChanged(Location location) {
                 t.setText(location.getLongitude() + " , " + location.getLatitude());
@@ -85,9 +99,9 @@ public class locations extends AppCompatActivity {
         configure_button();
 
 
-
-
-
+        /**
+         * Send coordinates to contacts via SMS
+         */
         sms.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -109,6 +123,9 @@ public class locations extends AppCompatActivity {
             }
         });
 
+        /**
+         * Views your location on Google Maps
+         */
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -129,8 +146,12 @@ public class locations extends AppCompatActivity {
     }
 
 
-
-
+    /**
+     * check the given permission by user
+     * @param requestCode request code
+     * @param permissions permissions
+     * @param grantResults results
+     */
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch (requestCode){
@@ -153,6 +174,9 @@ public class locations extends AppCompatActivity {
         }
         // this code won't execute IF permissions are not allowed, because in the line above there is return statement.
 
+        /**
+         * Requests coordinates from user
+         */
         b.setOnClickListener(new View.OnClickListener() {
             @SuppressLint("MissingPermission")
             @Override

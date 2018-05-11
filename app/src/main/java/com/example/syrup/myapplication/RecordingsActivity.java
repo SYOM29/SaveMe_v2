@@ -34,6 +34,11 @@ import com.google.firebase.storage.StorageReference;
 import java.io.File;
 import java.io.IOException;
 
+/**
+ * This class creates recordings page of the program where user is able to see and download his/her groups recordings
+ * @author SYRUP group: Siyovush Kadyrov, Emre Tolga Ayan, Atakan Bora Karacalioglu, Can Aybalik, Sertac Cebeci, Noman Aslam
+ * @version 1.0
+ */
 public class RecordingsActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener
 {
@@ -42,8 +47,14 @@ public class RecordingsActivity extends AppCompatActivity
     private StorageReference myRef;
     private FloatingActionButton download;
     private TextView recordingName;
+    private String mFileName = null;
 
-    @Override
+    /**
+     * This method creates environment for user to download his/her recordings
+     * @Override
+     * @param savedInstanceState
+     * @return void
+     */
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recordings);
@@ -76,8 +87,14 @@ public class RecordingsActivity extends AppCompatActivity
                             .addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
                                 @Override
                                 public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
+                                    //playing the audio
                                     MediaPlayer player = MediaPlayer.create(RecordingsActivity.this, Uri.parse(Environment.getExternalStorageDirectory().getPath() + "file1.mp3"));
                                     player.start();
+
+                                    //downloading the audio
+                                    Uri uri = Uri.fromFile(new File( mFileName));
+                                    mFileName = Environment.getExternalStorageDirectory().getAbsolutePath() + "/MyRecordings";
+                                    mFileName += "/" + "file1.mp3";
                                 }
                             }).addOnFailureListener(new OnFailureListener() {
                         @Override
@@ -96,12 +113,21 @@ public class RecordingsActivity extends AppCompatActivity
 
 
     }
-
+    /**
+     * This method deletes a view
+     * @param v
+     * @return void
+     */
     public void onDelete(View v) {
         parentLinearLayout.removeView((View) v.getParent());
     }
 
-    @Override
+    /**
+     * This method is used to open menu
+     * @Override
+     * @param
+     * @return void
+     */
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
@@ -111,7 +137,12 @@ public class RecordingsActivity extends AppCompatActivity
         }
     }
 
-    @Override
+    /**
+     * This method is used to navigate in menu
+     * @Override
+     * @param item
+     * @return void
+     */
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();

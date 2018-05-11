@@ -18,6 +18,12 @@ import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 
+/**
+ * This class creates settings page of the program
+ * has auto-Update GPS function, about us page, help page and edit profile page
+ * @author SYRUP group: Siyovush Kadyrov, Emre Tolga Ayan, Atakan Bora Karacalioglu, Can Aybalik, Sertac Cebeci, Noman Aslam
+ * @version 1.0
+ */
 public class SettingsActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     //properties
@@ -34,7 +40,12 @@ public class SettingsActivity extends AppCompatActivity
     private Switch autoUpdateSwitch;
     private boolean switchState;
 
-    @Override
+    /**
+     * This method creates environment for users settings
+     * @Override
+     * @param savedInstanceState
+     * @return void
+     */
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
@@ -100,7 +111,12 @@ public class SettingsActivity extends AppCompatActivity
         });
     }
 
-    @Override
+    /**
+     * This method is used to open Navigation Drawer Menu
+     * @param
+     * @Override
+     * @return void
+     */
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
@@ -110,8 +126,13 @@ public class SettingsActivity extends AppCompatActivity
         }
     }
 
-    @SuppressWarnings("StatementWithEmptyBody")
-    @Override
+    /**
+     * This method is used to get the names of the users from firebase
+     * @param item
+     * @SuppressWarnings("StatementWithEmptyBody")
+     * @Override
+     * @return void
+     */
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();

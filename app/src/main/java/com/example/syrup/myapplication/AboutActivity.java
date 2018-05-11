@@ -20,6 +20,11 @@ import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 
+/**
+ * This class creates about page of the settings page
+ * @author SYRUP group: Siyovush Kadyrov, Emre Tolga Ayan, Atakan Bora Karacalioglu, Can Aybalik, Sertac Cebeci, Noman Aslam
+ * @version 1.0
+ */
 public class AboutActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     //properties
@@ -30,7 +35,14 @@ public class AboutActivity extends AppCompatActivity
     private TextView groupName;
     private TextView text;
 
-    @Override
+    /**
+     * This method is used when this activity is called
+     * creates an activity
+     * creates texts used in about us page along with the logo
+     * @Override
+     * @param savedInstanceState
+     * @return void
+     */
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_about);
@@ -54,7 +66,12 @@ public class AboutActivity extends AppCompatActivity
         text = (TextView)findViewById(R.id.aboutTextView);
     }
 
-    @Override
+    /**
+     * This method is used to open menu
+     * @Override
+     * @param
+     * @return void
+     */
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
@@ -64,8 +81,13 @@ public class AboutActivity extends AppCompatActivity
         }
     }
 
-    @SuppressWarnings("StatementWithEmptyBody")
-    @Override
+    /**
+     * This method is used to navigate in the menu
+     * @SuppressWarnings("StatementWithEmptyBody")
+     * @Override
+     * @param item
+     * @return boolean
+     */
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();

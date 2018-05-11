@@ -7,30 +7,61 @@ import android.hardware.SensorManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.FloatMath;
 
+/**
+ * This class is used to enter cellphone into emergency mode
+ * Emergency mode- sends GPS location, records user and send it to a group
+ * @author SYRUP group: Siyovush Kadyrov, Emre Tolga Ayan, Atakan Bora Karacalioglu, Can Aybalik, Sertac Cebeci, Noman Aslam
+ * @version 1.0
+ */
 public class ShakeDetector  implements SensorEventListener {
-
+    //constants
     private static final float SHAKE_THRESHOLD_GRAVITY = 2.7F;
     private static final int SHAKE_SLOP_TIME_MS = 500;
     private static final int SHAKE_COUNT_RESET_TIME_MS = 3000;
 
+    //properties
     private OnShakeListener mListener;
     private long mShakeTimestamp;
     private int mShakeCount;
 
+    /**
+     * This method is used to set listener
+     * @param listener
+     * @return void
+     */
     public void setOnShakeListener(OnShakeListener listener)
     {
         this.mListener = listener;
 
     }
+
+    /**
+     * This interface is used to gdefine what the program wil do on shaking
+     * @param
+     * @return void
+     */
     public interface OnShakeListener
     {
         public void onShake(int count);
     }
+
+    /**
+     * This method is not used
+     * @param sensor
+     * @param accuracy
+     * @return void
+     */
     public void onAccuracyChanged(Sensor sensor, int accuracy)
     {
         //ignore
 
     }
+
+    /**
+     * This method is used to change program behavior on changes in sensor
+     * @param event
+     * @return void
+     */
     public void onSensorChanged(SensorEvent event)
     {
         if(mListener != null)
@@ -62,8 +93,5 @@ public class ShakeDetector  implements SensorEventListener {
                 mListener.onShake(mShakeCount);
             }
         }
-
     }
-
-
 }

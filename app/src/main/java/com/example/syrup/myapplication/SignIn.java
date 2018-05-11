@@ -31,13 +31,21 @@ import com.google.firebase.storage.FirebaseStorage;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * This class creates environment for user to signup for the program
+ * requires name, surname, password, password repetition, email and phone number
+ * @author SYRUP group: Siyovush Kadyrov, Emre Tolga Ayan, Atakan Bora Karacalioglu, Can Aybalik, Sertac Cebeci, Noman Aslam
+ * @version 1.0
+ */
 public class SignIn extends AppCompatActivity implements View.OnClickListener {
-    //AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+    //properties
     private final String NAME = "Name";
     private final String SURNAME = "Surname";
     private final String EMAIL = "Email";
     private final String GROUPCODE = "GroupCode";
     private final String TAG = "userInfo";
+
+    //properties
     private Button buttonRegister;
 
     private EditText editTextName;
@@ -55,7 +63,13 @@ public class SignIn extends AppCompatActivity implements View.OnClickListener {
 
 
 
-    @Override
+    /**
+     * This method is used to create environment for the user to signin
+     * @SuppressLint("ClickableViewAccessibility")
+     * @Override
+     * @param savedInstanceState
+     * @return void
+     */
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
@@ -260,6 +274,11 @@ public class SignIn extends AppCompatActivity implements View.OnClickListener {
 
     }
 
+    /**
+     * This method is used to generate random code for the user as ID
+     * @param
+     * @return String
+     */
     public String generateRandomCode()
     {
         String charPool = "1234567890qwertyuopasdfghjklizxcvbnm";

@@ -25,22 +25,32 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * This class creates groups for the users
+ * @author SYRUP group: Siyovush Kadyrov, Emre Tolga Ayan, Atakan Bora Karacalioglu, Can Aybalik, Sertac Cebeci, Noman Aslam
+ * @version 1.0
+ */
 public class Groups extends AppCompatActivity implements View.OnClickListener {
-
+    //properties
     private EditText groupCodeText;
     private Button enterGroupCode;
     private Button myGroups;
     private String groupCode;
     private FirebaseFirestore firebaseFirestore;
-    private final String TAG = "groupCode";
     private FirebaseAuth firebaseAuth;
     private static String phone;
     private static String anyPhone;
     private MyContainer myContainer;
 
+    //constants
+    private final String TAG = "groupCode";
 
-
-    @Override
+    /**
+     * This method creates environment for user to join to the group
+     * @Override
+     * @param savedInstanceState
+     * @return void
+     */
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_groups);
@@ -55,11 +65,13 @@ public class Groups extends AppCompatActivity implements View.OnClickListener {
         enterGroupCode.setOnClickListener(this);
         myGroups.setOnClickListener(this);
         getPhoneNum();
-
-
-
     }
 
+    /**
+     * This method returns phone number of the user
+     * @param
+     * @return String
+     */
     public String getPhoneNum()
     {
         FirebaseUser currentUser = firebaseAuth.getCurrentUser();
@@ -93,6 +105,11 @@ public class Groups extends AppCompatActivity implements View.OnClickListener {
         return getPhone();
     }
 
+    /**
+     * This method is used to set the phone number of the user
+     * @param thePhone
+     * @return String
+     */
     public static String setPhone( String thePhone)
     {
         anyPhone = thePhone;
@@ -101,13 +118,23 @@ public class Groups extends AppCompatActivity implements View.OnClickListener {
 
     }
 
+    /**
+     * This method returns phone number
+     * @param
+     * @return String
+     */
     public static String getPhone()
     {
         return phone;
     }
 
 
-    @Override
+    /**
+     * This method decides what will happen when buttons are clicked
+     * @Override
+     * @param view
+     * @return void
+     */
     public void onClick(View view) {
         if (view == enterGroupCode) {
             groupCode = groupCodeText.getText().toString().trim();
@@ -180,7 +207,6 @@ public class Groups extends AppCompatActivity implements View.OnClickListener {
 
             });
         }
-
         else if ( view == myGroups )
         {
             Intent goGroups = new Intent(Groups.this, GroupsShowPage.class);

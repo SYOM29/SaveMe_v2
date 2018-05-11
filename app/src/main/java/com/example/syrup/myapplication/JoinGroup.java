@@ -23,6 +23,11 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * This class is used to join a particular group
+ * @author SYRUP group: Siyovush Kadyrov, Emre Tolga Ayan, Atakan Bora Karacalioglu, Can Aybalik, Sertac Cebeci, Noman Aslam
+ * @version 1.0
+ */
 public class JoinGroup extends AppCompatActivity implements View.OnClickListener{
 
     private FirebaseFirestore firebaseFirestore;
